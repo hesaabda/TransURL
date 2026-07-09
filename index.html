@@ -131,7 +131,7 @@
     .tool__input:focus { outline: none; border-color: var(--color-blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
     .tool__input::placeholder { color: var(--color-gray-400); }
 
-    .tool__output { min-height: 280px; border: 1px solid var(--color-gray-200); border-radius: var(--border-radius-lg); background-color: var(--color-gray-50); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--spacing-md); position: relative; overflow: hidden; }
+    .tool__output { min-height: 280px; border: 1px solid var(--color-gray-200); border-radius: var(--border-radius-lg); background-color: var(--color-gray-50); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--spacing-md); position: relative; }
     .tool__output--placeholder { text-align: center; color: var(--color-gray-400); }
     .tool__output--placeholder svg { width: 72px; height: 72px; margin-bottom: var(--spacing-sm); opacity: 0.25; }
     .tool__output--placeholder p { font-family: var(--font-heading); font-size: 14px; font-weight: 500; }
@@ -147,10 +147,10 @@
     /* Edit Panel */
     .edit-panel {
       display: none;
-      position: fixed;
-      top: 50%;
+      position: absolute;
+      top: 100%;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%);
       background-color: var(--color-white);
       border: 1px solid var(--color-gray-200);
       border-radius: var(--border-radius-lg);
@@ -158,17 +158,18 @@
       padding: var(--spacing-md);
       width: 340px;
       max-width: 90vw;
-      z-index: 250;
+      z-index: 50;
+      margin-top: 8px;
     }
 
     .edit-panel.active {
       display: block;
-      animation: slideIn 0.25s ease;
+      animation: slideDown 0.25s ease;
     }
 
-    @keyframes slideIn {
-      from { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
-      to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
     }
 
     .edit-panel__header {
@@ -275,6 +276,20 @@
 
     .edit-panel__file-input {
       display: none;
+    }
+
+    .edit-panel__logo-preview {
+      display: none;
+      width: 48px;
+      height: 48px;
+      border-radius: var(--border-radius-sm);
+      object-fit: contain;
+      border: 1px solid var(--color-gray-200);
+      margin: 0 auto;
+    }
+
+    .edit-panel__logo-preview.active {
+      display: block;
     }
 
     .edit-panel__range-row {
@@ -518,17 +533,6 @@
     .footer__text { font-size: 13px; color: var(--color-gray-500); margin-bottom: var(--spacing-sm); }
     .footer__decor { width: 100%; height: 2px; background: linear-gradient(90deg, transparent, var(--color-blue), var(--color-purple), transparent); margin-top: var(--spacing-md); }
 
-    /* Overlay for mobile dialogs */
-    .dialog-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background-color: rgba(0, 0, 0, 0.3);
-      z-index: 200;
-    }
-
-    .dialog-overlay.active { display: block; }
-
     /* RESPONSIVE */
     @media (max-width: 768px) {
       :root { --spacing-xl: 3rem; --spacing-2xl: 4rem; }
@@ -552,14 +556,50 @@
       .tool-tab { padding: 10px; }
       .shortener__link-box { flex-direction: column; align-items: stretch; gap: 8px; }
       .shortener__copy-btn { justify-content: center; }
+
+      .download-dropdown__menu {
+        position: fixed;
+        bottom: auto;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 260px;
+        z-index: 200;
+      }
+      .download-dropdown__menu.active { animation: fadeIn 0.2s ease; }
+      @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+      .download-overlay { display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.3); z-index: 150; }
+      .download-overlay.active { display: block; }
+
+      .edit-panel {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90vw;
+        max-width: 360px;
+        z-index: 200;
+      }
+
+      .edit-panel.active { animation: fadeIn 0.2s ease; }
+
+      .edit-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.3);
+        z-index: 150;
+      }
+
+      .edit-overlay.active { display: block; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Overlays -->
-  <div class="dialog-overlay" id="download-overlay"></div>
-  <div class="dialog-overlay" id="edit-overlay"></div>
+  <div class="download-overlay" id="download-overlay"></div>
+  <div class="edit-overlay" id="edit-overlay"></div>
 
   <!-- NAVIGATION -->
   <nav class="navbar" role="navigation" aria-label="Main Navigation">
@@ -705,6 +745,54 @@
                   Reset
                 </button>
               </div>
+
+              <!-- Edit Panel -->
+              <div class="edit-panel" id="edit-panel">
+                <div class="edit-panel__header">
+                  <span class="edit-panel__title">Edit QR Code</span>
+                  <button class="edit-panel__close" id="edit-panel-close" aria-label="Tutup edit panel">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  </button>
+                </div>
+
+                <div class="edit-panel__group">
+                  <span class="edit-panel__label">Warna QR</span>
+                  <div class="edit-panel__color-row">
+                    <div class="edit-panel__color-pick">
+                      <label for="edit-fg-color">Foreground</label>
+                      <input type="color" id="edit-fg-color" class="edit-panel__color-input" value="#0F172A">
+                    </div>
+                    <div class="edit-panel__color-pick">
+                      <label for="edit-bg-color">Background</label>
+                      <input type="color" id="edit-bg-color" class="edit-panel__color-input" value="#FFFFFF">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="edit-panel__group">
+                  <span class="edit-panel__label">Logo (Opsional)</span>
+                  <label class="edit-panel__file-label" id="edit-file-label" for="edit-logo-input">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                    <span id="edit-file-text">Upload Logo</span>
+                  </label>
+                  <input type="file" id="edit-logo-input" class="edit-panel__file-input" accept="image/*">
+                  <img id="edit-logo-preview" class="edit-panel__logo-preview" alt="Logo preview">
+                </div>
+
+                <div class="edit-panel__group" id="edit-logo-size-group" style="display: none;">
+                  <span class="edit-panel__label">Ukuran Logo</span>
+                  <div class="edit-panel__range-row">
+                    <input type="range" id="edit-logo-size" class="edit-panel__range" min="10" max="40" value="25">
+                    <span class="edit-panel__range-value" id="edit-logo-size-value">25%</span>
+                  </div>
+                </div>
+
+                <div class="edit-panel__actions">
+                  <button class="edit-panel__btn-remove" id="edit-btn-remove">Reset Default</button>
+                  <button class="edit-panel__btn-apply" id="edit-btn-apply">Terapkan</button>
+                </div>
+              </div>
+
             </div>
           </div>
 
@@ -762,52 +850,6 @@
     </div>
   </section>
 
-  <!-- Edit Panel (Fixed Position Modal) -->
-  <div class="edit-panel" id="edit-panel" role="dialog" aria-modal="true" aria-label="Edit QR Code">
-    <div class="edit-panel__header">
-      <span class="edit-panel__title">Edit QR Code</span>
-      <button class="edit-panel__close" id="edit-panel-close" aria-label="Tutup edit panel">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-      </button>
-    </div>
-
-    <div class="edit-panel__group">
-      <span class="edit-panel__label">Warna QR</span>
-      <div class="edit-panel__color-row">
-        <div class="edit-panel__color-pick">
-          <label for="edit-fg-color">Foreground</label>
-          <input type="color" id="edit-fg-color" class="edit-panel__color-input" value="#0F172A">
-        </div>
-        <div class="edit-panel__color-pick">
-          <label for="edit-bg-color">Background</label>
-          <input type="color" id="edit-bg-color" class="edit-panel__color-input" value="#FFFFFF">
-        </div>
-      </div>
-    </div>
-
-    <div class="edit-panel__group">
-      <span class="edit-panel__label">Logo (Opsional)</span>
-      <label class="edit-panel__file-label" id="edit-file-label" for="edit-logo-input">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <span id="edit-file-text">Upload Logo</span>
-      </label>
-      <input type="file" id="edit-logo-input" class="edit-panel__file-input" accept="image/*">
-    </div>
-
-    <div class="edit-panel__group" id="edit-logo-size-group" style="display: none;">
-      <span class="edit-panel__label">Ukuran Logo</span>
-      <div class="edit-panel__range-row">
-        <input type="range" id="edit-logo-size" class="edit-panel__range" min="10" max="40" value="25">
-        <span class="edit-panel__range-value" id="edit-logo-size-value">25%</span>
-      </div>
-    </div>
-
-    <div class="edit-panel__actions">
-      <button class="edit-panel__btn-remove" id="edit-btn-remove">Reset Default</button>
-      <button class="edit-panel__btn-apply" id="edit-btn-apply">Terapkan</button>
-    </div>
-  </div>
-
   <!-- FEATURES -->
   <section class="features" id="features" aria-labelledby="features-title">
     <div class="container">
@@ -827,12 +869,12 @@
           <p class="feature-card__desc">Proses instan di browser. Generate QR atau shorten URL tanpa loading lama.</p>
         </article>
         <article class="feature-card" aria-labelledby="feature-3">
-          <div class="feature-card__icon" aria-hidden="true"></div>
+          <div class="feature-card__icon" aria-hidden="true">🔐</div>
           <h3 class="feature-card__title" id="feature-3">Aman &amp;<br>Privasi Terjaga</h3>
           <p class="feature-card__desc">Semua diproses client-side. Data tidak pernah dikirim atau disimpan di server.</p>
         </article>
         <article class="feature-card" aria-labelledby="feature-4">
-          <div class="feature-card__icon" aria-hidden="true"></div>
+          <div class="feature-card__icon" aria-hidden="true">📱</div>
           <h3 class="feature-card__title" id="feature-4">Mobile<br>Friendly</h3>
           <p class="feature-card__desc">Desain responsif. Pakai di HP, tablet, atau desktop dengan pengalaman sama bagusnya.</p>
         </article>
@@ -921,7 +963,7 @@
         </span>
         TransURL
       </div>
-      <p class="footer__text">© 2026 TransURL. Dibuat untuk diriku sendiri. Tidak ada biaya tersembunyi.</p>
+      <p class="footer__text">© 2026 TransURL. Dibuat untuk komunitas. Tidak ada biaya tersembunyi.</p>
       <div class="footer__decor" aria-hidden="true"></div>
     </div>
   </footer>
@@ -959,6 +1001,7 @@
       var editLogoInput = document.getElementById('edit-logo-input');
       var editFileLabel = document.getElementById('edit-file-label');
       var editFileText = document.getElementById('edit-file-text');
+      var editLogoPreview = document.getElementById('edit-logo-preview');
       var editLogoSizeGroup = document.getElementById('edit-logo-size-group');
       var editLogoSize = document.getElementById('edit-logo-size');
       var editLogoSizeValue = document.getElementById('edit-logo-size-value');
@@ -1045,13 +1088,17 @@
         editPanel.classList.add('active');
         btnEditQR.classList.add('active');
         editOverlay.classList.add('active');
+        // Set current colors
         editFgColor.value = qrForegroundColor;
         editBgColor.value = qrBackgroundColor;
         if (qrLogoImage) {
+          editLogoPreview.src = qrLogoImage.src;
+          editLogoPreview.classList.add('active');
           editFileLabel.classList.add('has-file');
           editFileText.textContent = 'Ganti Logo';
           editLogoSizeGroup.style.display = 'block';
         } else {
+          editLogoPreview.classList.remove('active');
           editFileLabel.classList.remove('has-file');
           editFileText.textContent = 'Upload Logo';
           editLogoSizeGroup.style.display = 'none';
@@ -1080,6 +1127,8 @@
             var img = new Image();
             img.onload = function() {
               qrLogoImage = img;
+              editLogoPreview.src = ev.target.result;
+              editLogoPreview.classList.add('active');
               editFileLabel.classList.add('has-file');
               editFileText.textContent = 'Ganti Logo';
               editLogoSizeGroup.style.display = 'block';
@@ -1112,6 +1161,7 @@
         qrLogoSizePercent = 25;
         editFgColor.value = qrForegroundColor;
         editBgColor.value = qrBackgroundColor;
+        editLogoPreview.classList.remove('active');
         editFileLabel.classList.remove('has-file');
         editFileText.textContent = 'Upload Logo';
         editLogoSizeGroup.style.display = 'none';
@@ -1177,6 +1227,7 @@
         try {
           qrInstance = new QRCode(qrCodeContainer, { text: qrText, width: 200, height: 200, colorDark: qrForegroundColor, colorLight: qrBackgroundColor, correctLevel: QRCode.CorrectLevel.M });
           
+          // Apply logo if exists
           if (qrLogoImage) {
             setTimeout(function() {
               var qrCanvas = qrCodeContainer.querySelector('canvas');
@@ -1212,7 +1263,12 @@
         var logoSize = canvas.width * (qrLogoSizePercent / 100);
         var x = (canvas.width - logoSize) / 2;
         var y = (canvas.height - logoSize) / 2;
-        // Draw logo directly without white background box
+        
+        // Draw white background for logo
+        ctx.fillStyle = qrBackgroundColor;
+        ctx.fillRect(x - 4, y - 4, logoSize + 8, logoSize + 8);
+        
+        // Draw logo
         ctx.drawImage(qrLogoImage, x, y, logoSize, logoSize);
       }
 
@@ -1223,6 +1279,7 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.drawImage(canvas, 0, 0);
         qrCanvasCustom.style.display = 'block';
+        // Hide original qr elements
         var qrImg = qrCodeContainer.querySelector('img');
         if (qrImg) qrImg.style.display = 'none';
         var qrC = qrCodeContainer.querySelector('canvas');
