@@ -6,12 +6,9 @@
   <meta name="description" content="TransURL - Generate QR Code & Shorten URL 100% Gratis. Tanpa biaya, tanpa batas, tanpa pendaftaran.">
   <title>TransURL - QR Code & URL Shortener Gratis</title>
   
-  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- QRCode.js Library -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
   <style>
@@ -28,7 +25,6 @@
       --color-gray-700: #334155;
       --color-gray-800: #1E293B;
       --color-gray-900: #0F172A;
-      
       --color-red: #E63946;
       --color-yellow: #F59E0B;
       --color-green: #10B981;
@@ -40,20 +36,19 @@
       --color-purple-light: #F5F3FF;
       --color-amber: #F59E0B;
       --color-amber-dark: #D97706;
-      
+      --color-cyan: #06B6D4;
+      --color-cyan-light: #ECFEFF;
       --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
       --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
       --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
       --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-      
+      --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
       --border-radius-sm: 6px;
       --border-radius-md: 8px;
       --border-radius-lg: 12px;
       --border-radius-xl: 16px;
-      
       --spacing-xs: 0.5rem;
       --spacing-sm: 1rem;
       --spacing-md: 1.5rem;
@@ -64,7 +59,6 @@
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
-
     body {
       font-family: var(--font-body);
       background-color: var(--color-white);
@@ -79,22 +73,97 @@
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 
     /* NAVIGATION */
-    .navbar { border-bottom: 1px solid var(--color-gray-200); background-color: rgba(255, 255, 255, 0.95); backdrop-filter: blur(8px); padding: var(--spacing-sm) 0; position: sticky; top: 0; z-index: 100; }
+    .navbar {
+      border-bottom: 1px solid var(--color-gray-200);
+      background-color: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      padding: var(--spacing-sm) 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
     .navbar .container { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-sm); }
-    .navbar__logo { font-family: var(--font-heading); font-size: 22px; font-weight: 800; color: var(--color-gray-900); display: flex; align-items: center; gap: 8px; letter-spacing: -0.5px; cursor: default; user-select: none; }
+    .navbar__logo {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--color-gray-900);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.5px;
+      cursor: default;
+      user-select: none;
+    }
     .navbar__logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--color-blue), var(--color-purple)); display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius-md); box-shadow: var(--shadow-sm); }
     .navbar__logo-icon svg { width: 20px; height: 20px; fill: var(--color-white); }
+    .navbar__right { display: flex; align-items: center; gap: var(--spacing-sm); }
     .navbar__links { display: flex; gap: var(--spacing-md); list-style: none; align-items: center; }
     .navbar__links a { font-family: var(--font-heading); font-size: 14px; font-weight: 500; color: var(--color-gray-600); text-decoration: none; padding: var(--spacing-xs) var(--spacing-sm); border-radius: var(--border-radius-sm); transition: all 0.15s ease; }
     .navbar__links a:hover { color: var(--color-gray-900); background-color: var(--color-gray-100); }
     .navbar__hamburger { display: none; background: none; border: none; cursor: pointer; padding: var(--spacing-xs); border-radius: var(--border-radius-sm); }
     .navbar__hamburger span { display: block; width: 22px; height: 2px; background-color: var(--color-gray-700); margin: 5px 0; transition: all 0.2s ease; border-radius: 2px; }
 
+    /* Language Dropdown */
+    .lang-dropdown { position: relative; }
+    .lang-dropdown__btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--border-radius-sm);
+      background: var(--color-white);
+      color: var(--color-gray-700);
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .lang-dropdown__btn:hover { background: var(--color-gray-50); border-color: var(--color-gray-400); }
+    .lang-dropdown__btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .lang-dropdown__menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      right: 0;
+      background: var(--color-white);
+      border: 1px solid var(--color-gray-200);
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-xl);
+      padding: 4px;
+      min-width: 160px;
+      z-index: 200;
+    }
+    .lang-dropdown__menu.active { display: block; animation: slideDown 0.2s ease; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+    .lang-dropdown__item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 8px 12px;
+      border: none;
+      background: none;
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      font-family: var(--font-heading);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--color-gray-700);
+      transition: all 0.15s ease;
+      text-align: left;
+    }
+    .lang-dropdown__item:hover { background-color: var(--color-gray-100); color: var(--color-gray-900); }
+    .lang-dropdown__item.active { background-color: var(--color-blue-light); color: var(--color-blue); }
+    .lang-dropdown__flag { font-size: 16px; line-height: 1; }
+
     /* HERO */
     .hero { padding: var(--spacing-2xl) 0 var(--spacing-xl); text-align: center; background: linear-gradient(180deg, var(--color-blue-light) 0%, var(--color-purple-light) 50%, var(--color-white) 100%); position: relative; overflow: hidden; }
     .hero::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, transparent, var(--color-blue), var(--color-purple), transparent); }
     .hero__badges { display: flex; justify-content: center; gap: var(--spacing-sm); margin-bottom: var(--spacing-md); flex-wrap: wrap; }
-    .hero__badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-heading); font-size: 12px; font-weight: 600; padding: 8px 14px; border-radius: 50px; background-color: var(--color-white); box-shadow: var(--shadow-md); border: 1px solid var(--color-gray-200); }
+    .hero__badge { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-heading); font-size: 12px; font-weight: 600; padding: 8px 14px; border-radius: 50px; background-color: var(--color-white); margin-bottom: 0; box-shadow: var(--shadow-md); border: 1px solid var(--color-gray-200); }
     .hero__badge--blue { color: var(--color-blue); }
     .hero__badge--purple { color: var(--color-purple); }
     .hero__badge svg { width: 14px; height: 14px; fill: currentColor; }
@@ -124,272 +193,25 @@
     .tool-tab svg { width: 18px; height: 18px; fill: currentColor; }
     .tool-panel { display: none; }
     .tool-panel.active { display: block; }
-
     .tool__box { max-width: 680px; margin: 0 auto; background-color: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: var(--border-radius-xl); box-shadow: var(--shadow-xl); padding: var(--spacing-lg); }
     .tool__input-group { display: flex; gap: var(--spacing-sm); margin-bottom: var(--spacing-sm); flex-wrap: wrap; }
     .tool__input { flex: 1; min-width: 220px; font-family: var(--font-body); font-size: 15px; padding: 12px 16px; border: 1px solid var(--color-gray-300); border-radius: var(--border-radius-md); background-color: var(--color-white); color: var(--color-gray-900); box-shadow: var(--shadow-sm); transition: all 0.15s ease; }
     .tool__input:focus { outline: none; border-color: var(--color-blue); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
     .tool__input::placeholder { color: var(--color-gray-400); }
-
     .tool__output { min-height: 280px; border: 1px solid var(--color-gray-200); border-radius: var(--border-radius-lg); background-color: var(--color-gray-50); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--spacing-md); position: relative; }
     .tool__output--placeholder { text-align: center; color: var(--color-gray-400); }
     .tool__output--placeholder svg { width: 72px; height: 72px; margin-bottom: var(--spacing-sm); opacity: 0.25; }
     .tool__output--placeholder p { font-family: var(--font-heading); font-size: 14px; font-weight: 500; }
-
     .qr-result { display: none; flex-direction: column; align-items: center; gap: var(--spacing-sm); }
     .qr-result.active { display: flex; }
     .qr-result #qrcode { border: 1px solid var(--color-gray-200); padding: var(--spacing-md); background-color: var(--color-white); border-radius: var(--border-radius-md); box-shadow: var(--shadow-sm); }
     .qr-result #qrcode img { display: block; }
-
     .qr-actions { display: none; gap: var(--spacing-sm); flex-wrap: wrap; justify-content: center; margin-top: var(--spacing-md); position: relative; }
     .qr-actions.active { display: flex; }
 
-    /* Edit Panel */
-    .edit-panel {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: var(--color-white);
-      border: 1px solid var(--color-gray-200);
-      border-radius: var(--border-radius-lg);
-      box-shadow: var(--shadow-xl);
-      padding: var(--spacing-md);
-      width: 340px;
-      max-width: 90vw;
-      z-index: 50;
-      margin-top: 8px;
-    }
-
-    .edit-panel.active {
-      display: block;
-      animation: slideDown 0.25s ease;
-    }
-
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
-      to { opacity: 1; transform: translateX(-50%) translateY(0); }
-    }
-
-    .edit-panel__header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: var(--spacing-sm);
-      padding-bottom: var(--spacing-xs);
-      border-bottom: 1px solid var(--color-gray-200);
-    }
-
-    .edit-panel__title {
-      font-family: var(--font-heading);
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--color-gray-900);
-    }
-
-    .edit-panel__close {
-      background: none;
-      border: none;
-      cursor: pointer;
-      padding: 4px;
-      color: var(--color-gray-500);
-      border-radius: var(--border-radius-sm);
-      transition: all 0.15s ease;
-    }
-
-    .edit-panel__close:hover {
-      background-color: var(--color-gray-100);
-      color: var(--color-gray-700);
-    }
-
-    .edit-panel__group {
-      margin-bottom: var(--spacing-sm);
-    }
-
-    .edit-panel__label {
-      font-family: var(--font-heading);
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--color-gray-600);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 6px;
-      display: block;
-    }
-
-    .edit-panel__color-row {
-      display: flex;
-      gap: var(--spacing-sm);
-    }
-
-    .edit-panel__color-pick {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .edit-panel__color-pick label {
-      font-size: 12px;
-      color: var(--color-gray-500);
-    }
-
-    .edit-panel__color-input {
-      width: 100%;
-      height: 36px;
-      border: 1px solid var(--color-gray-300);
-      border-radius: var(--border-radius-sm);
-      cursor: pointer;
-      padding: 2px;
-    }
-
-    .edit-panel__color-input::-webkit-color-swatch-wrapper { padding: 0; }
-    .edit-panel__color-input::-webkit-color-swatch { border: none; border-radius: 4px; }
-
-    .edit-panel__file-label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 12px;
-      border: 2px dashed var(--color-gray-300);
-      border-radius: var(--border-radius-md);
-      cursor: pointer;
-      transition: all 0.15s ease;
-      font-size: 13px;
-      color: var(--color-gray-500);
-      text-align: center;
-    }
-
-    .edit-panel__file-label:hover {
-      border-color: var(--color-blue);
-      background-color: var(--color-blue-light);
-      color: var(--color-blue);
-    }
-
-    .edit-panel__file-label.has-file {
-      border-color: var(--color-green);
-      background-color: #ECFDF5;
-      color: var(--color-green);
-    }
-
-    .edit-panel__file-input {
-      display: none;
-    }
-
-    .edit-panel__logo-preview {
-      display: none;
-      width: 48px;
-      height: 48px;
-      border-radius: var(--border-radius-sm);
-      object-fit: contain;
-      border: 1px solid var(--color-gray-200);
-      margin: 0 auto;
-    }
-
-    .edit-panel__logo-preview.active {
-      display: block;
-    }
-
-    .edit-panel__range-row {
-      display: flex;
-      align-items: center;
-      gap: var(--spacing-sm);
-    }
-
-    .edit-panel__range {
-      flex: 1;
-      -webkit-appearance: none;
-      appearance: none;
-      height: 6px;
-      background: var(--color-gray-200);
-      border-radius: 3px;
-      outline: none;
-    }
-
-    .edit-panel__range::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      background: var(--color-blue);
-      border-radius: 50%;
-      cursor: pointer;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .edit-panel__range-value {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--color-gray-700);
-      min-width: 36px;
-      text-align: right;
-    }
-
-    .edit-panel__actions {
-      display: flex;
-      gap: var(--spacing-xs);
-      margin-top: var(--spacing-sm);
-      padding-top: var(--spacing-sm);
-      border-top: 1px solid var(--color-gray-200);
-    }
-
-    .edit-panel__btn-apply {
-      flex: 1;
-      font-family: var(--font-heading);
-      font-size: 13px;
-      font-weight: 600;
-      padding: 10px;
-      border: none;
-      border-radius: var(--border-radius-md);
-      background: linear-gradient(135deg, var(--color-blue), var(--color-purple));
-      color: var(--color-white);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .edit-panel__btn-apply:hover {
-      transform: translateY(-1px);
-      box-shadow: var(--shadow-md);
-    }
-
-    .edit-panel__btn-remove {
-      flex: 1;
-      font-family: var(--font-heading);
-      font-size: 13px;
-      font-weight: 600;
-      padding: 10px;
-      border: 1px solid var(--color-gray-300);
-      border-radius: var(--border-radius-md);
-      background-color: var(--color-white);
-      color: var(--color-gray-600);
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .edit-panel__btn-remove:hover {
-      background-color: var(--color-gray-100);
-      border-color: var(--color-red);
-      color: var(--color-red);
-    }
-
     /* Download Dropdown */
     .download-dropdown { position: relative; }
-    .download-dropdown__menu {
-      display: none;
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: var(--color-white);
-      border: 1px solid var(--color-gray-200);
-      border-radius: var(--border-radius-lg);
-      box-shadow: var(--shadow-xl);
-      padding: 6px;
-      min-width: 220px;
-      z-index: 50;
-    }
+    .download-dropdown__menu { display: none; position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); background-color: var(--color-white); border: 1px solid var(--color-gray-200); border-radius: var(--border-radius-lg); box-shadow: var(--shadow-xl); padding: 6px; min-width: 220px; z-index: 50; }
     .download-dropdown__menu.active { display: block; animation: slideUp 0.2s ease; }
     @keyframes slideUp { from { opacity: 0; transform: translateX(-50%) translateY(8px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
     .download-dropdown__section { padding: 4px 0; }
@@ -415,72 +237,20 @@
     .shortener-actions.active { display: flex; }
 
     /* Main Action Buttons */
-    .btn-edit-qr {
-      font-family: var(--font-heading);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 12px 24px;
-      border: none;
-      border-radius: var(--border-radius-md);
-      background: linear-gradient(135deg, var(--color-purple), var(--color-purple-dark));
-      color: var(--color-white);
-      cursor: pointer;
-      box-shadow: var(--shadow-md);
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .btn-edit-qr:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-    .btn-edit-qr.active { background: linear-gradient(135deg, var(--color-purple-dark), #6D28D9); box-shadow: var(--shadow-lg); }
-
-    .btn-edit-qr svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-    .btn-download-qr {
-      font-family: var(--font-heading);
-      font-size: 14px;
-      font-weight: 600;
-      padding: 12px 24px;
-      border: none;
-      border-radius: var(--border-radius-md);
-      background: linear-gradient(135deg, var(--color-blue), var(--color-blue-dark));
-      color: var(--color-white);
-      cursor: pointer;
-      box-shadow: var(--shadow-md);
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      position: relative;
-    }
-
+    .btn-download-qr { font-family: var(--font-heading); font-size: 14px; font-weight: 600; padding: 12px 24px; border: none; border-radius: var(--border-radius-md); background: linear-gradient(135deg, var(--color-blue), var(--color-blue-dark)); color: var(--color-white); cursor: pointer; box-shadow: var(--shadow-md); transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; position: relative; }
     .btn-download-qr:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
     .btn-download-qr.active { background: linear-gradient(135deg, var(--color-blue-dark), var(--color-purple-dark)); }
     .btn-download-qr svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-    .btn-reset {
-      font-family: var(--font-heading);
-      font-size: 14px;
-      font-weight: 500;
-      padding: 12px 24px;
-      border: 1px solid var(--color-gray-300);
-      border-radius: var(--border-radius-md);
-      background-color: var(--color-white);
-      color: var(--color-gray-600);
-      cursor: pointer;
-      transition: all 0.15s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-
+    .btn-edit-qr { font-family: var(--font-heading); font-size: 14px; font-weight: 600; padding: 12px 24px; border: 1px solid var(--color-purple); border-radius: var(--border-radius-md); background: linear-gradient(135deg, var(--color-purple-light), #EDE9FE); color: var(--color-purple-dark); cursor: pointer; box-shadow: var(--shadow-sm); transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-edit-qr:hover { background: linear-gradient(135deg, var(--color-purple), var(--color-purple-dark)); color: var(--color-white); border-color: var(--color-purple-dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn-edit-qr svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .btn-reset { font-family: var(--font-heading); font-size: 14px; font-weight: 500; padding: 12px 24px; border: 1px solid var(--color-gray-300); border-radius: var(--border-radius-md); background-color: var(--color-white); color: var(--color-gray-600); cursor: pointer; transition: all 0.15s ease; display: inline-flex; align-items: center; gap: 8px; }
     .btn-reset:hover { background-color: var(--color-gray-100); color: var(--color-gray-900); border-color: var(--color-gray-400); }
-    .btn-reset svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
+    .btn-reset svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .tool__note { text-align: center; margin-top: var(--spacing-md); font-size: 13px; color: var(--color-gray-500); display: flex; align-items: center; justify-content: center; gap: 6px; }
     .tool__note svg { width: 16px; height: 16px; fill: var(--color-green); }
 
+    /* Loading */
     .tool__loading { display: none; text-align: center; width: 100%; }
     .tool__loading.active { display: block; }
     .tool__loading-bar { width: 100%; height: 6px; border-radius: 3px; background-color: var(--color-gray-200); margin: var(--spacing-sm) 0; position: relative; overflow: hidden; }
@@ -488,23 +258,83 @@
     .tool__loading-text { font-family: var(--font-heading); font-size: 13px; font-weight: 500; color: var(--color-gray-500); animation: pulse 1.5s ease-in-out infinite; }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
 
+    /* EDIT QR MODAL */
+    .modal-overlay { display: none; position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 300; align-items: center; justify-content: center; padding: var(--spacing-md); }
+    .modal-overlay.active { display: flex; }
+    .edit-modal { background-color: var(--color-white); border-radius: var(--border-radius-xl); box-shadow: var(--shadow-2xl); width: 100%; max-width: 600px; max-height: 90vh; overflow-y: auto; animation: modalSlideIn 0.3s ease; }
+    @keyframes modalSlideIn { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    .edit-modal__header { display: flex; align-items: center; justify-content: space-between; padding: var(--spacing-md) var(--spacing-lg); border-bottom: 1px solid var(--color-gray-200); }
+    .edit-modal__title { font-family: var(--font-heading); font-size: 18px; font-weight: 700; color: var(--color-gray-900); display: flex; align-items: center; gap: 8px; }
+    .edit-modal__title svg { width: 22px; height: 22px; fill: none; stroke: var(--color-purple); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .edit-modal__close { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: none; background: var(--color-gray-100); border-radius: var(--border-radius-sm); cursor: pointer; color: var(--color-gray-500); transition: all 0.15s ease; }
+    .edit-modal__close:hover { background: var(--color-gray-200); color: var(--color-gray-700); }
+    .edit-modal__close svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+    .edit-modal__body { padding: var(--spacing-lg); }
+    .edit-modal__preview { display: flex; align-items: center; justify-content: center; padding: var(--spacing-md); background-color: var(--color-gray-50); border: 1px solid var(--color-gray-200); border-radius: var(--border-radius-lg); margin-bottom: var(--spacing-lg); min-height: 240px; }
+    .edit-modal__preview #qr-edit-preview { display: inline-block; }
+    .edit-section { margin-bottom: var(--spacing-md); }
+    .edit-section__title { font-family: var(--font-heading); font-size: 14px; font-weight: 600; color: var(--color-gray-800); margin-bottom: var(--spacing-sm); display: flex; align-items: center; gap: 8px; }
+    .edit-section__title svg { width: 16px; height: 16px; fill: none; stroke: var(--color-purple); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .color-row { display: flex; gap: var(--spacing-sm); align-items: center; margin-bottom: var(--spacing-xs); }
+    .color-label { font-size: 13px; font-weight: 500; color: var(--color-gray-600); min-width: 100px; }
+    .color-picker-wrapper { display: flex; align-items: center; gap: 8px; flex: 1; }
+    .color-picker { width: 44px; height: 36px; border: 2px solid var(--color-gray-300); border-radius: var(--border-radius-sm); cursor: pointer; padding: 2px; background: none; }
+    .color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+    .color-picker::-webkit-color-swatch { border: none; border-radius: 4px; }
+    .color-picker::-moz-color-swatch { border: none; border-radius: 4px; }
+    .color-hex { font-family: var(--font-body); font-size: 13px; color: var(--color-gray-500); background: var(--color-gray-50); padding: 6px 10px; border-radius: var(--border-radius-sm); border: 1px solid var(--color-gray-200); width: 100px; }
+    .color-hex:focus { outline: none; border-color: var(--color-purple); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15); }
+    .logo-upload-area { border: 2px dashed var(--color-gray-300); border-radius: var(--border-radius-lg); padding: var(--spacing-md); text-align: center; cursor: pointer; transition: all 0.2s ease; background-color: var(--color-gray-50); }
+    .logo-upload-area:hover { border-color: var(--color-purple); background-color: var(--color-purple-light); }
+    .logo-upload-area.has-logo { border-style: solid; border-color: var(--color-green); background-color: #ECFDF5; }
+    .logo-upload-area svg { width: 32px; height: 32px; fill: none; stroke: var(--color-gray-400); stroke-width: 1.5; margin-bottom: 8px; }
+    .logo-upload-area.has-logo svg { stroke: var(--color-green); }
+    .logo-upload-area p { font-size: 13px; color: var(--color-gray-500); }
+    .logo-upload-area .logo-filename { font-size: 12px; color: var(--color-green); font-weight: 600; margin-top: 4px; }
+    .logo-upload-area input[type="file"] { display: none; }
+    .logo-controls { display: none; margin-top: var(--spacing-sm); gap: var(--spacing-sm); flex-wrap: wrap; }
+    .logo-controls.active { display: flex; }
+    .logo-control-group { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 200px; }
+    .logo-control-label { font-size: 13px; color: var(--color-gray-600); white-space: nowrap; }
+    .logo-size-slider { flex: 1; -webkit-appearance: none; appearance: none; height: 6px; background: var(--color-gray-200); border-radius: 3px; outline: none; }
+    .logo-size-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; background: var(--color-purple); border-radius: 50%; cursor: pointer; }
+    .logo-size-slider::-moz-range-thumb { width: 18px; height: 18px; background: var(--color-purple); border-radius: 50%; cursor: pointer; border: none; }
+    .logo-size-value { font-size: 12px; font-weight: 600; color: var(--color-purple); min-width: 40px; text-align: right; }
+    .btn-remove-logo { font-family: var(--font-heading); font-size: 12px; font-weight: 600; padding: 6px 14px; border: 1px solid var(--color-red); border-radius: var(--border-radius-sm); background-color: var(--color-white); color: var(--color-red); cursor: pointer; transition: all 0.15s ease; }
+    .btn-remove-logo:hover { background-color: var(--color-red); color: var(--color-white); }
+    .edit-modal__footer { display: flex; justify-content: flex-end; gap: var(--spacing-sm); padding: var(--spacing-md) var(--spacing-lg); border-top: 1px solid var(--color-gray-200); }
+    .btn-apply-edit { font-family: var(--font-heading); font-size: 14px; font-weight: 600; padding: 12px 24px; border: none; border-radius: var(--border-radius-md); background: linear-gradient(135deg, var(--color-purple), var(--color-purple-dark)); color: var(--color-white); cursor: pointer; box-shadow: var(--shadow-md); transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 8px; }
+    .btn-apply-edit:hover { transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+    .btn-apply-edit svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .btn-cancel-edit { font-family: var(--font-heading); font-size: 14px; font-weight: 500; padding: 12px 24px; border: 1px solid var(--color-gray-300); border-radius: var(--border-radius-md); background-color: var(--color-white); color: var(--color-gray-600); cursor: pointer; transition: all 0.15s ease; }
+    .btn-cancel-edit:hover { background-color: var(--color-gray-100); color: var(--color-gray-900); }
+
     /* FEATURES */
     .features { padding: var(--spacing-2xl) 0; background-color: var(--color-white); }
     .features__header { text-align: center; margin-bottom: var(--spacing-xl); }
     .features__header h2 { font-family: var(--font-heading); font-size: clamp(24px, 3vw, 32px); font-weight: 700; margin-bottom: var(--spacing-xs); color: var(--color-gray-900); letter-spacing: -0.5px; }
     .features__header p { font-size: 15px; color: var(--color-gray-500); }
-    .features__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-md); }
+    .features__grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-md); }
     .feature-card { text-align: center; padding: var(--spacing-md); border: 1px solid var(--color-gray-200); border-radius: var(--border-radius-lg); background-color: var(--color-white); transition: all 0.2s ease; }
     .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--color-gray-300); }
-    .feature-card__icon { width: 56px; height: 56px; margin: 0 auto var(--spacing-sm); display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius-md); font-size: 22px; }
-    .feature-card:nth-child(1) .feature-card__icon { background-color: #ECFDF5; color: var(--color-green); }
-    .feature-card:nth-child(2) .feature-card__icon { background-color: #FEF3C7; color: var(--color-yellow); }
-    .feature-card:nth-child(3) .feature-card__icon { background-color: #EFF6FF; color: var(--color-blue); }
-    .feature-card:nth-child(4) .feature-card__icon { background-color: #FEF2F2; color: var(--color-red); }
-    .feature-card:nth-child(5) .feature-card__icon { background-color: var(--color-purple-light); color: var(--color-purple); }
-    .feature-card:nth-child(6) .feature-card__icon { background-color: var(--color-purple-light); color: var(--color-purple); }
-    .feature-card:nth-child(7) .feature-card__icon { background-color: #ECFDF5; color: var(--color-green); }
-    .feature-card:nth-child(8) .feature-card__icon { background-color: var(--color-blue-light); color: var(--color-blue); }
+    .feature-card__icon { width: 56px; height: 56px; margin: 0 auto var(--spacing-sm); display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius-md); transition: all 0.2s ease; }
+    .feature-card__icon svg { width: 28px; height: 28px; stroke-width: 1.5; }
+    .feature-card:nth-child(1) .feature-card__icon { background-color: #ECFDF5; }
+    .feature-card:nth-child(1) .feature-card__icon svg { stroke: var(--color-green); fill: none; }
+    .feature-card:nth-child(2) .feature-card__icon { background-color: #FEF3C7; }
+    .feature-card:nth-child(2) .feature-card__icon svg { stroke: var(--color-yellow); fill: none; }
+    .feature-card:nth-child(3) .feature-card__icon { background-color: #EFF6FF; }
+    .feature-card:nth-child(3) .feature-card__icon svg { stroke: var(--color-blue); fill: none; }
+    .feature-card:nth-child(4) .feature-card__icon { background-color: #FEF2F2; }
+    .feature-card:nth-child(4) .feature-card__icon svg { stroke: var(--color-red); fill: none; }
+    .feature-card:nth-child(5) .feature-card__icon { background-color: var(--color-purple-light); }
+    .feature-card:nth-child(5) .feature-card__icon svg { stroke: var(--color-purple); fill: none; }
+    .feature-card:nth-child(6) .feature-card__icon { background-color: var(--color-purple-light); }
+    .feature-card:nth-child(6) .feature-card__icon svg { stroke: var(--color-purple); fill: none; }
+    .feature-card:nth-child(7) .feature-card__icon { background-color: var(--color-cyan-light); }
+    .feature-card:nth-child(7) .feature-card__icon svg { stroke: var(--color-cyan); fill: none; }
+    .feature-card:nth-child(8) .feature-card__icon { background-color: #F0FDF4; }
+    .feature-card:nth-child(8) .feature-card__icon svg { stroke: var(--color-green); fill: none; }
     .feature-card__title { font-family: var(--font-heading); font-size: 15px; font-weight: 600; margin-bottom: 8px; color: var(--color-gray-900); line-height: 1.3; }
     .feature-card__desc { font-size: 14px; color: var(--color-gray-500); line-height: 1.5; }
 
@@ -544,6 +374,10 @@
       .navbar__hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
       .navbar__hamburger.active span:nth-child(2) { opacity: 0; }
       .navbar__hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+      .edit-modal { max-width: 95vw; margin: var(--spacing-sm); }
+      .color-row { flex-wrap: wrap; }
+      .color-label { min-width: auto; }
+      .navbar__right { width: 100%; justify-content: space-between; padding-top: var(--spacing-xs); border-top: 1px solid var(--color-gray-200); margin-top: var(--spacing-xs); }
     }
 
     @media (max-width: 480px) {
@@ -556,50 +390,98 @@
       .tool-tab { padding: 10px; }
       .shortener__link-box { flex-direction: column; align-items: stretch; gap: 8px; }
       .shortener__copy-btn { justify-content: center; }
-
-      .download-dropdown__menu {
-        position: fixed;
-        bottom: auto;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        min-width: 260px;
-        z-index: 200;
-      }
+      .download-dropdown__menu { position: fixed; bottom: auto; left: 50%; top: 50%; transform: translate(-50%, -50%); min-width: 260px; z-index: 200; }
       .download-dropdown__menu.active { animation: fadeIn 0.2s ease; }
       @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
       .download-overlay { display: none; position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.3); z-index: 150; }
       .download-overlay.active { display: block; }
-
-      .edit-panel {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 90vw;
-        max-width: 360px;
-        z-index: 200;
-      }
-
-      .edit-panel.active { animation: fadeIn 0.2s ease; }
-
-      .edit-overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background-color: rgba(0, 0, 0, 0.3);
-        z-index: 150;
-      }
-
-      .edit-overlay.active { display: block; }
+      .qr-actions { flex-direction: column; }
+      .qr-actions > * { width: 100%; justify-content: center; }
+      .edit-modal__footer { flex-direction: column; }
+      .edit-modal__footer button { width: 100%; justify-content: center; }
+      .navbar__right { width: 100%; justify-content: space-between; }
     }
   </style>
 </head>
 <body>
 
   <div class="download-overlay" id="download-overlay"></div>
-  <div class="edit-overlay" id="edit-overlay"></div>
+
+  <!-- EDIT QR MODAL -->
+  <div class="modal-overlay" id="edit-modal-overlay">
+    <div class="edit-modal" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+      <div class="edit-modal__header">
+        <h3 class="edit-modal__title" id="edit-modal-title">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+          <span data-i18n="editModalTitle">Edit QR Code</span>
+        </h3>
+        <button class="edit-modal__close" id="edit-modal-close" aria-label="Close editor">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="edit-modal__body">
+        <div class="edit-modal__preview"><div id="qr-edit-preview"></div></div>
+
+        <div class="edit-section">
+          <h4 class="edit-section__title">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12.5" r="2.5"/>
+              <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.5-.7 1.5-1.5 0-.4-.1-.7-.4-1-.3-.3-.4-.7-.4-1.1 0-.8.7-1.5 1.5-1.5H16c3.3 0 6-2.7 6-6 0-5.5-4.5-9-10-9z"/>
+            </svg>
+            <span data-i18n="editColorsTitle">QR Code Colors</span>
+          </h4>
+          <div class="color-row">
+            <span class="color-label" data-i18n="fgColorLabel">Foreground</span>
+            <div class="color-picker-wrapper">
+              <input type="color" id="edit-fg-color" class="color-picker" value="#0F172A" aria-label="QR foreground color">
+              <input type="text" id="edit-fg-hex" class="color-hex" value="#0F172A" maxlength="7" aria-label="Foreground color code">
+            </div>
+          </div>
+          <div class="color-row">
+            <span class="color-label" data-i18n="bgColorLabel">Background</span>
+            <div class="color-picker-wrapper">
+              <input type="color" id="edit-bg-color" class="color-picker" value="#FFFFFF" aria-label="QR background color">
+              <input type="text" id="edit-bg-hex" class="color-hex" value="#FFFFFF" maxlength="7" aria-label="Background color code">
+            </div>
+          </div>
+        </div>
+
+        <div class="edit-section">
+          <h4 class="edit-section__title">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
+            </svg>
+            <span data-i18n="editLogoTitle">Center Logo</span>
+          </h4>
+          <div class="logo-upload-area" id="logo-upload-area">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <p data-i18n="logoUploadText">Click to upload logo (PNG, JPG, SVG)</p>
+            <p class="logo-filename" id="logo-filename"></p>
+            <input type="file" id="logo-file-input" accept="image/*" aria-label="Upload logo for QR Code">
+          </div>
+          <div class="logo-controls" id="logo-controls">
+            <div class="logo-control-group">
+              <span class="logo-control-label" data-i18n="logoSizeLabel">Logo Size:</span>
+              <input type="range" id="logo-size-slider" class="logo-size-slider" min="15" max="40" value="25" aria-label="Logo size">
+              <span class="logo-size-value" id="logo-size-value">25%</span>
+            </div>
+            <button class="btn-remove-logo" id="btn-remove-logo" data-i18n="removeLogoBtn">Remove Logo</button>
+          </div>
+        </div>
+      </div>
+      <div class="edit-modal__footer">
+        <button class="btn-cancel-edit" id="btn-cancel-edit" data-i18n="cancelBtn">Cancel</button>
+        <button class="btn-apply-edit" id="btn-apply-edit">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>
+          <span data-i18n="applyBtn">Apply Changes</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- NAVIGATION -->
   <nav class="navbar" role="navigation" aria-label="Main Navigation">
@@ -607,19 +489,41 @@
       <span class="navbar__logo" aria-label="TransURL">
         <span class="navbar__logo-icon">
           <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M13.07 10.93l-4.54 4.54a3 3 0 01-4.24-4.24l4.54-4.54M10.93 13.07l4.54-4.54a3 3 0 014.24 4.24l-4.54 4.54" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
           </svg>
         </span>
         TransURL
       </span>
-      <button class="navbar__hamburger" aria-label="Toggle menu" aria-expanded="false">
-        <span></span><span></span><span></span>
-      </button>
-      <ul class="navbar__links" role="menubar">
-        <li role="none"><a href="#tools" role="menuitem">Tools</a></li>
-        <li role="none"><a href="#features" role="menuitem">Fitur</a></li>
-        <li role="none"><a href="#how-it-works" role="menuitem">Cara Pakai</a></li>
-      </ul>
+      <div class="navbar__right">
+        <ul class="navbar__links" role="menubar">
+          <li role="none"><a href="#tools" role="menuitem" data-i18n="navTools">Tools</a></li>
+          <li role="none"><a href="#features" role="menuitem" data-i18n="navFeatures">Features</a></li>
+          <li role="none"><a href="#how-it-works" role="menuitem" data-i18n="navHowTo">How to Use</a></li>
+        </ul>
+        <div class="lang-dropdown">
+          <button class="lang-dropdown__btn" id="lang-btn" aria-label="Select language" aria-haspopup="true" aria-expanded="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+            <span id="lang-current">ID</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+          <div class="lang-dropdown__menu" id="lang-menu" role="menu">
+            <button class="lang-dropdown__item active" data-lang="id" role="menuitem">
+              <span class="lang-dropdown__flag">🇮🇩</span>
+              <span>Bahasa Indonesia</span>
+            </button>
+            <button class="lang-dropdown__item" data-lang="en" role="menuitem">
+              <span class="lang-dropdown__flag">🇬🇧</span>
+              <span>English</span>
+            </button>
+          </div>
+        </div>
+        <button class="navbar__hamburger" aria-label="Toggle menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
     </div>
   </nav>
 
@@ -628,26 +532,32 @@
     <div class="container">
       <div class="hero__badges">
         <div class="hero__badge hero__badge--blue">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
-          QR Code Generator
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/>
+          </svg>
+          <span data-i18n="badgeQR">QR Code Generator</span>
         </div>
         <div class="hero__badge hero__badge--purple">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.07 10.93l-4.54 4.54a3 3 0 01-4.24-4.24l4.54-4.54M10.93 13.07l4.54-4.54a3 3 0 014.24 4.24l-4.54 4.54" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-          URL Shortener
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+          </svg>
+          <span data-i18n="badgeURL">URL Shortener</span>
         </div>
       </div>
       <h1 id="hero-title" class="hero__title">
-        <span class="highlight-blue">Generate QR Code</span> &amp;<br>
-        <span class="highlight-purple">Shorten URL</span><br>
-        100% Gratis.
+        <span class="highlight-blue" data-i18n="heroTitle1">Generate QR Code</span> &amp;<br>
+        <span class="highlight-purple" data-i18n="heroTitle2">Shorten URL</span><br>
+        <span data-i18n="heroTitle3">100% Free.</span>
       </h1>
-      <p class="hero__subtitle">Dua tools powerful dalam satu tempat. Tanpa biaya, tanpa batas, tanpa pendaftaran.</p>
+      <p class="hero__subtitle" data-i18n="heroSubtitle">
+        Two powerful tools in one place. No cost, no limits, no registration required.
+      </p>
       <div class="hero__cta">
-        <a href="#tools" class="btn-primary" aria-label="Mulai menggunakan tools">
+        <a href="#tools" class="btn-primary" aria-label="Start using tools">
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-          Coba Sekarang
+          <span data-i18n="heroCTA">Try Now</span>
         </a>
-        <span class="hero__cta-note">✓ Gratis selamanya &nbsp;•&nbsp; ✓ Tanpa login</span>
+        <span class="hero__cta-note"><span data-i18n="heroNote">✓ Free forever &nbsp;•&nbsp; ✓ No login</span></span>
       </div>
     </div>
   </section>
@@ -656,18 +566,22 @@
   <section class="tool-section" id="tools" aria-labelledby="tools-title">
     <div class="container">
       <div class="tool-section__header">
-        <h2 id="tools-title">Pilih Tool</h2>
-        <p>Mau buat QR Code atau shorten URL?</p>
+        <h2 id="tools-title" data-i18n="toolTitle">Choose a Tool</h2>
+        <p data-i18n="toolSubtitle">Want to create a QR Code or shorten a URL?</p>
       </div>
 
-      <div class="tool-tabs" role="tablist" aria-label="Pilih tool">
+      <div class="tool-tabs" role="tablist" aria-label="Choose a tool">
         <button class="tool-tab active" role="tab" aria-selected="true" aria-controls="panel-qr" id="tab-qr" data-target="panel-qr">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
-          QR Code
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/>
+          </svg>
+          <span data-i18n="tabQR">QR Code</span>
         </button>
         <button class="tool-tab" role="tab" aria-selected="false" aria-controls="panel-shortener" id="tab-shortener" data-target="panel-shortener">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.07 10.93l-4.54 4.54a3 3 0 01-4.24-4.24l4.54-4.54M10.93 13.07l4.54-4.54a3 3 0 014.24 4.24l-4.54 4.54" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-          URL Shortener
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+          </svg>
+          <span data-i18n="tabURL">URL Shortener</span>
         </button>
       </div>
 
@@ -675,130 +589,90 @@
       <div class="tool-panel active" id="panel-qr" role="tabpanel" aria-labelledby="tab-qr">
         <div class="tool__box">
           <div class="tool__input-group">
-            <label for="qr-input" class="sr-only">Masukkan URL atau teks untuk generate QR Code</label>
-            <input type="text" id="qr-input" class="tool__input" placeholder="Masukkan URL atau teks untuk QR Code..." aria-describedby="qr-note" autocomplete="off">
+            <label for="qr-input" class="sr-only" data-i18n="qrInputLabel">Enter URL or text to generate QR Code</label>
+            <input type="text" id="qr-input" class="tool__input" data-i18n-placeholder="qrInputPlaceholder" placeholder="Enter URL or text for QR Code..." aria-describedby="qr-note" autocomplete="off">
             <button id="btn-generate-qr" class="btn-primary" aria-label="Generate QR Code">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              Generate QR
+              <span data-i18n="btnGenerate">Generate QR</span>
             </button>
           </div>
 
           <div class="tool__output" id="qr-output" aria-live="polite">
             <div class="tool__output--placeholder" id="qr-placeholder">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/></svg>
-              <p>QR Code akan muncul di sini</p>
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="3" height="3"/><rect x="18" y="18" width="3" height="3"/>
+              </svg>
+              <p data-i18n="qrPlaceholder">QR Code will appear here</p>
             </div>
 
             <div class="tool__loading" id="qr-loading" aria-hidden="true">
-              <div class="tool__loading-bar"><div class="tool__loading-bar__fill" id="qr-loading-fill"></div></div>
-              <p class="tool__loading-text">Generating QR Code...</p>
+              <div class="tool__loading-bar">
+                <div class="tool__loading-bar__fill" id="qr-loading-fill"></div>
+              </div>
+              <p class="tool__loading-text" data-i18n="qrLoadingText">Generating QR Code...</p>
             </div>
 
             <div class="qr-result" id="qr-result">
               <div id="qrcode"></div>
-              <canvas id="qr-canvas-custom" style="display:none;"></canvas>
               <div class="qr-actions" id="qr-actions">
                 <button class="btn-edit-qr" id="btn-edit-qr" aria-label="Edit QR Code">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                  Edit QR
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                  </svg>
+                  <span data-i18n="btnEditQR">Edit QR</span>
                 </button>
                 <div class="download-dropdown">
                   <button class="btn-download-qr" id="btn-download-qr" aria-label="Download QR Code" aria-haspopup="true" aria-expanded="false">
                     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 18h16"/></svg>
-                    Download QR
+                    <span data-i18n="btnDownloadQR">Download QR</span>
                   </button>
                   <div class="download-dropdown__menu" id="download-menu" role="menu">
                     <div class="download-dropdown__section">
-                      <div class="download-dropdown__label">Download</div>
+                      <div class="download-dropdown__label" data-i18n="downloadLabel">Download</div>
                       <button class="download-dropdown__item download-dropdown__item--download" id="opt-download-jpg" role="menuitem">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 18h16"/></svg>
-                        Download JPG
+                        <span data-i18n="downloadJPG">Download JPG</span>
                       </button>
                       <button class="download-dropdown__item download-dropdown__item--download" id="opt-download-png" role="menuitem">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 18h16"/></svg>
-                        Download PNG
+                        <span data-i18n="downloadPNG">Download PNG</span>
                       </button>
                       <button class="download-dropdown__item download-dropdown__item--download" id="opt-download-svg" role="menuitem">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v12m0 0l-4-4m4 4l4-4M4 18h16"/></svg>
-                        Download SVG
+                        <span data-i18n="downloadSVG">Download SVG</span>
                       </button>
                     </div>
                     <div class="download-dropdown__section">
-                      <div class="download-dropdown__label">Copy to Clipboard</div>
+                      <div class="download-dropdown__label" data-i18n="copyLabel">Copy to Clipboard</div>
                       <button class="download-dropdown__item download-dropdown__item--copy" id="opt-copy-jpg" role="menuitem">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-                        Copy JPG
+                        <span data-i18n="copyJPG">Copy JPG</span>
                       </button>
                       <button class="download-dropdown__item download-dropdown__item--copy" id="opt-copy-png" role="menuitem">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-                        Copy PNG
+                        <span data-i18n="copyPNG">Copy PNG</span>
                       </button>
                       <button class="download-dropdown__item download-dropdown__item--copy" id="opt-copy-svg" role="menuitem">
                         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-                        Copy SVG
+                        <span data-i18n="copySVG">Copy SVG</span>
                       </button>
                     </div>
                   </div>
                 </div>
                 <button class="btn-reset" id="btn-reset-qr" aria-label="Reset QR Code">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1018 0 9 9 0 00-18 0"/><path d="M3 12h4m14 0h-4"/></svg>
-                  Reset
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <polyline points="1 4 1 10 7 10"/>
+                    <path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+                  </svg>
+                  <span data-i18n="btnReset">Reset</span>
                 </button>
               </div>
-
-              <!-- Edit Panel -->
-              <div class="edit-panel" id="edit-panel">
-                <div class="edit-panel__header">
-                  <span class="edit-panel__title">Edit QR Code</span>
-                  <button class="edit-panel__close" id="edit-panel-close" aria-label="Tutup edit panel">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                  </button>
-                </div>
-
-                <div class="edit-panel__group">
-                  <span class="edit-panel__label">Warna QR</span>
-                  <div class="edit-panel__color-row">
-                    <div class="edit-panel__color-pick">
-                      <label for="edit-fg-color">Foreground</label>
-                      <input type="color" id="edit-fg-color" class="edit-panel__color-input" value="#0F172A">
-                    </div>
-                    <div class="edit-panel__color-pick">
-                      <label for="edit-bg-color">Background</label>
-                      <input type="color" id="edit-bg-color" class="edit-panel__color-input" value="#FFFFFF">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="edit-panel__group">
-                  <span class="edit-panel__label">Logo (Opsional)</span>
-                  <label class="edit-panel__file-label" id="edit-file-label" for="edit-logo-input">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                    <span id="edit-file-text">Upload Logo</span>
-                  </label>
-                  <input type="file" id="edit-logo-input" class="edit-panel__file-input" accept="image/*">
-                  <img id="edit-logo-preview" class="edit-panel__logo-preview" alt="Logo preview">
-                </div>
-
-                <div class="edit-panel__group" id="edit-logo-size-group" style="display: none;">
-                  <span class="edit-panel__label">Ukuran Logo</span>
-                  <div class="edit-panel__range-row">
-                    <input type="range" id="edit-logo-size" class="edit-panel__range" min="10" max="40" value="25">
-                    <span class="edit-panel__range-value" id="edit-logo-size-value">25%</span>
-                  </div>
-                </div>
-
-                <div class="edit-panel__actions">
-                  <button class="edit-panel__btn-remove" id="edit-btn-remove">Reset Default</button>
-                  <button class="edit-panel__btn-apply" id="edit-btn-apply">Terapkan</button>
-                </div>
-              </div>
-
             </div>
           </div>
 
           <p class="tool__note" id="qr-note">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-5-5 1.41-1.41L11 14.17l7.59-7.59L20 8l-9 9z"/></svg>
-            100% Free. Data tidak disimpan di server.
+            <span data-i18n="qrNote">100% Free. Data is not stored on the server.</span>
           </p>
         </div>
       </div>
@@ -807,43 +681,56 @@
       <div class="tool-panel" id="panel-shortener" role="tabpanel" aria-labelledby="tab-shortener">
         <div class="tool__box">
           <div class="tool__input-group">
-            <label for="url-input" class="sr-only">Masukkan URL panjang untuk di-shorten</label>
-            <input type="url" id="url-input" class="tool__input" placeholder="Masukkan URL panjang di sini..." aria-describedby="shortener-note" autocomplete="off">
+            <label for="url-input" class="sr-only" data-i18n="urlInputLabel">Enter long URL to shorten</label>
+            <input type="url" id="url-input" class="tool__input" data-i18n-placeholder="urlInputPlaceholder" placeholder="Enter long URL here..." aria-describedby="shortener-note" autocomplete="off">
             <button id="btn-shorten" class="btn-primary" aria-label="Shorten URL">
               <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-              Shorten URL
+              <span data-i18n="btnShorten">Shorten URL</span>
             </button>
           </div>
 
           <div class="tool__output" id="shortener-output" aria-live="polite">
             <div class="tool__output--placeholder" id="shortener-placeholder">
-              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.07 10.93l-4.54 4.54a3 3 0 01-4.24-4.24l4.54-4.54M10.93 13.07l4.54-4.54a3 3 0 014.24 4.24l-4.54 4.54" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
-              <p>Short URL akan muncul di sini</p>
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+              </svg>
+              <p data-i18n="shortenerPlaceholder">Short URL will appear here</p>
             </div>
 
             <div class="tool__loading" id="shortener-loading" aria-hidden="true">
-              <div class="tool__loading-bar"><div class="tool__loading-bar__fill" id="shortener-loading-fill"></div></div>
-              <p class="tool__loading-text">Shortening URL...</p>
+              <div class="tool__loading-bar">
+                <div class="tool__loading-bar__fill" id="shortener-loading-fill"></div>
+              </div>
+              <p class="tool__loading-text" data-i18n="shortenerLoadingText">Shortening URL...</p>
             </div>
 
             <div class="shortener-result" id="shortener-result">
               <div class="shortener__link-box">
                 <span class="shortener__link-text" id="short-url-display">transurl.id/xK3mP</span>
                 <button class="shortener__copy-btn" id="btn-copy" aria-label="Copy short URL">
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-                  Copy
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2" fill="none"/>
+                    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2" fill="none"/>
+                  </svg>
+                  <span data-i18n="btnCopy">Copy</span>
                 </button>
               </div>
               <p class="shortener__original" id="original-url-display">Original URL: https://example.com/very/long/url/path...</p>
               <div class="shortener-actions" id="shortener-actions">
-                <button class="btn-reset" id="btn-reset-url" aria-label="Reset dan shorten URL baru">Reset</button>
+                <button class="btn-reset" id="btn-reset-url" aria-label="Reset and shorten new URL">
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <polyline points="1 4 1 10 7 10"/>
+                    <path d="M3.51 15a9 9 0 102.13-9.36L1 10"/>
+                  </svg>
+                  <span data-i18n="btnReset">Reset</span>
+                </button>
               </div>
             </div>
           </div>
 
           <p class="tool__note" id="shortener-note">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15l-5-5 1.41-1.41L11 14.17l7.59-7.59L20 8l-9 9z"/></svg>
-            URL di-generate secara lokal. Tidak ada data yang dikirim ke server.
+            <span data-i18n="shortenerNote">URLs are generated locally. No data is sent to any server.</span>
           </p>
         </div>
       </div>
@@ -854,49 +741,90 @@
   <section class="features" id="features" aria-labelledby="features-title">
     <div class="container">
       <div class="features__header">
-        <h2 id="features-title">Kenapa TransURL?</h2>
-        <p>Tools gratis yang powerful dan mudah digunakan</p>
+        <h2 id="features-title" data-i18n="featuresTitle">Why TransURL?</h2>
+        <p data-i18n="featuresSubtitle">Free tools that are powerful and easy to use</p>
       </div>
       <div class="features__grid">
+        <!-- Card 1: Free -->
         <article class="feature-card" aria-labelledby="feature-1">
-          <div class="feature-card__icon" aria-hidden="true">✓</div>
-          <h3 class="feature-card__title" id="feature-1">100% Gratis<br>Selamanya</h3>
-          <p class="feature-card__desc">QR Code &amp; URL Shortener gratis tanpa biaya tersembunyi atau subscription.</p>
+          <div class="feature-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+            </svg>
+          </div>
+          <h3 class="feature-card__title" id="feature-1"><span data-i18n="feat1Title">100% Free<br>Forever</span></h3>
+          <p class="feature-card__desc" data-i18n="feat1Desc">QR Code &amp; URL Shortener free with no hidden costs or subscriptions.</p>
         </article>
+        <!-- Card 2: Fast -->
         <article class="feature-card" aria-labelledby="feature-2">
-          <div class="feature-card__icon" aria-hidden="true">⚡</div>
-          <h3 class="feature-card__title" id="feature-2">Super Cepat<br>&lt; 1 Detik</h3>
-          <p class="feature-card__desc">Proses instan di browser. Generate QR atau shorten URL tanpa loading lama.</p>
+          <div class="feature-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </div>
+          <h3 class="feature-card__title" id="feature-2"><span data-i18n="feat2Title">Super Fast<br>&lt; 1 Second</span></h3>
+          <p class="feature-card__desc" data-i18n="feat2Desc">Instant processing in your browser. Generate QR or shorten URLs without waiting.</p>
         </article>
+        <!-- Card 3: Secure -->
         <article class="feature-card" aria-labelledby="feature-3">
-          <div class="feature-card__icon" aria-hidden="true">🔐</div>
-          <h3 class="feature-card__title" id="feature-3">Aman &amp;<br>Privasi Terjaga</h3>
-          <p class="feature-card__desc">Semua diproses client-side. Data tidak pernah dikirim atau disimpan di server.</p>
+          <div class="feature-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+          </div>
+          <h3 class="feature-card__title" id="feature-3"><span data-i18n="feat3Title">Safe &amp;<br>Private</span></h3>
+          <p class="feature-card__desc" data-i18n="feat3Desc">All processing is done client-side. Data is never sent or stored on any server.</p>
         </article>
+        <!-- Card 4: Mobile -->
         <article class="feature-card" aria-labelledby="feature-4">
-          <div class="feature-card__icon" aria-hidden="true">📱</div>
-          <h3 class="feature-card__title" id="feature-4">Mobile<br>Friendly</h3>
-          <p class="feature-card__desc">Desain responsif. Pakai di HP, tablet, atau desktop dengan pengalaman sama bagusnya.</p>
+          <div class="feature-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><path d="M12 18h.01"/>
+            </svg>
+          </div>
+          <h3 class="feature-card__title" id="feature-4"><span data-i18n="feat4Title">Mobile<br>Friendly</span></h3>
+          <p class="feature-card__desc" data-i18n="feat4Desc">Responsive design. Use on phone, tablet, or desktop with the same great experience.</p>
         </article>
+        <!-- Card 5: URL Shortener -->
         <article class="feature-card" aria-labelledby="feature-5">
-          <div class="feature-card__icon" aria-hidden="true">🔗</div>
-          <h3 class="feature-card__title" id="feature-5">URL Shortener<br>Instan</h3>
-          <p class="feature-card__desc">Persingkat URL panjang jadi link yang ringkas dan mudah dibagikan.</p>
+          <div class="feature-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+            </svg>
+          </div>
+          <h3 class="feature-card__title" id="feature-5"><span data-i18n="feat5Title">Instant URL<br>Shortener</span></h3>
+          <p class="feature-card__desc" data-i18n="feat5Desc">Shorten long URLs into compact links that are easy to share.</p>
         </article>
+        <!-- Card 6: Export -->
         <article class="feature-card" aria-labelledby="feature-6">
-          <div class="feature-card__icon" aria-hidden="true">⬇️</div>
-          <h3 class="feature-card__title" id="feature-6">6 Format<br>Export</h3>
-          <p class="feature-card__desc">Download JPG, PNG, SVG atau copy langsung ke clipboard.</p>
+          <div class="feature-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </div>
+          <h3 class="feature-card__title" id="feature-6"><span data-i18n="feat6Title">6 Export<br>Formats</span></h3>
+          <p class="feature-card__desc" data-i18n="feat6Desc">Download JPG, PNG, SVG or copy directly to clipboard.</p>
         </article>
+        <!-- Card 7: Custom QR -->
         <article class="feature-card" aria-labelledby="feature-7">
-          <div class="feature-card__icon" aria-hidden="true">🎨</div>
-          <h3 class="feature-card__title" id="feature-7">Edit Warna<br>&amp; Logo</h3>
-          <p class="feature-card__desc">Kustomisasi warna QR dan tambahkan logo di tengah.</p>
+          <div class="feature-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+            </svg>
+          </div>
+          <h3 class="feature-card__title" id="feature-7"><span data-i18n="feat7Title">Custom QR<br>+ Logo</span></h3>
+          <p class="feature-card__desc" data-i18n="feat7Desc">Edit colors and add a logo to the center of your QR Code easily.</p>
         </article>
+        <!-- Card 8: No Install -->
         <article class="feature-card" aria-labelledby="feature-8">
-          <div class="feature-card__icon" aria-hidden="true">📋</div>
-          <h3 class="feature-card__title" id="feature-8">Copy Link<br>Satu Klik</h3>
-          <p class="feature-card__desc">Short URL bisa langsung di-copy ke clipboard hanya dengan satu klik.</p>
+          <div class="feature-card__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24">
+              <path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/>
+            </svg>
+          </div>
+          <h3 class="feature-card__title" id="feature-8"><span data-i18n="feat8Title">No Install<br>Required</span></h3>
+          <p class="feature-card__desc" data-i18n="feat8Desc">Runs directly in your browser. No downloads, no extensions, no installations.</p>
         </article>
       </div>
     </div>
@@ -906,47 +834,55 @@
   <section class="how-it-works" id="how-it-works" aria-labelledby="how-title">
     <div class="container">
       <div class="how-it-works__header">
-        <h2 id="how-title">Cara Pakai</h2>
-        <p>Cuma 3 langkah simpel untuk setiap tool</p>
+        <h2 id="how-title" data-i18n="howTitle">How to Use</h2>
+        <p data-i18n="howSubtitle">Just 3 simple steps for each tool</p>
       </div>
+
       <div class="steps-container">
         <div>
-          <div class="steps-group-title"><span class="dot-qr"></span>QR Code Generator</div>
+          <div class="steps-group-title">
+            <span class="dot-qr"></span>
+            <span data-i18n="qrStepsTitle">QR Code Generator</span>
+          </div>
           <div class="steps">
             <article class="step step--qr" aria-labelledby="qr-step-1">
               <div class="step__number" aria-hidden="true">1</div>
-              <h3 class="step__title" id="qr-step-1">Masukkan URL atau Teks</h3>
-              <p class="step__desc">Ketik atau paste konten yang mau diubah jadi QR Code</p>
+              <h3 class="step__title" id="qr-step-1"><span data-i18n="qrStep1Title">Enter URL or Text</span></h3>
+              <p class="step__desc" data-i18n="qrStep1Desc">Type or paste the content you want to turn into a QR Code</p>
             </article>
             <article class="step step--qr" aria-labelledby="qr-step-2">
               <div class="step__number" aria-hidden="true">2</div>
-              <h3 class="step__title" id="qr-step-2">Klik Generate QR</h3>
-              <p class="step__desc">Tekan tombol "Generate QR" dan tunggu sebentar</p>
+              <h3 class="step__title" id="qr-step-2"><span data-i18n="qrStep2Title">Click Generate QR</span></h3>
+              <p class="step__desc" data-i18n="qrStep2Desc">Press the "Generate QR" button and wait a moment</p>
             </article>
             <article class="step step--qr" aria-labelledby="qr-step-3">
               <div class="step__number" aria-hidden="true">3</div>
-              <h3 class="step__title" id="qr-step-3">Edit &amp; Export</h3>
-              <p class="step__desc">Edit warna/logo, lalu download atau copy ke clipboard</p>
+              <h3 class="step__title" id="qr-step-3"><span data-i18n="qrStep3Title">Edit &amp; Export</span></h3>
+              <p class="step__desc" data-i18n="qrStep3Desc">Edit colors, add logo, then download or copy</p>
             </article>
           </div>
         </div>
+
         <div>
-          <div class="steps-group-title"><span class="dot-url"></span>URL Shortener</div>
+          <div class="steps-group-title">
+            <span class="dot-url"></span>
+            <span data-i18n="urlStepsTitle">URL Shortener</span>
+          </div>
           <div class="steps">
             <article class="step step--url" aria-labelledby="url-step-1">
               <div class="step__number" aria-hidden="true">1</div>
-              <h3 class="step__title" id="url-step-1">Paste URL Panjang</h3>
-              <p class="step__desc">Masukkan URL panjang yang ingin dipersingkat</p>
+              <h3 class="step__title" id="url-step-1"><span data-i18n="urlStep1Title">Paste Long URL</span></h3>
+              <p class="step__desc" data-i18n="urlStep1Desc">Enter the long URL you want to shorten</p>
             </article>
             <article class="step step--url" aria-labelledby="url-step-2">
               <div class="step__number" aria-hidden="true">2</div>
-              <h3 class="step__title" id="url-step-2">Klik Shorten URL</h3>
-              <p class="step__desc">Tekan tombol "Shorten URL" untuk generate link pendek</p>
+              <h3 class="step__title" id="url-step-2"><span data-i18n="urlStep2Title">Click Shorten URL</span></h3>
+              <p class="step__desc" data-i18n="urlStep2Desc">Press the "Shorten URL" button to generate a short link</p>
             </article>
             <article class="step step--url" aria-labelledby="url-step-3">
               <div class="step__number" aria-hidden="true">3</div>
-              <h3 class="step__title" id="url-step-3">Copy &amp; Bagikan</h3>
-              <p class="step__desc">Short URL siap di-copy dan dibagikan ke siapa saja</p>
+              <h3 class="step__title" id="url-step-3"><span data-i18n="urlStep3Title">Copy &amp; Share</span></h3>
+              <p class="step__desc" data-i18n="urlStep3Desc">The short URL is ready to copy and share with anyone</p>
             </article>
           </div>
         </div>
@@ -959,11 +895,14 @@
     <div class="container">
       <div class="footer__brand">
         <span class="footer__brand-icon">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13.07 10.93l-4.54 4.54a3 3 0 01-4.24-4.24l4.54-4.54M10.93 13.07l4.54-4.54a3 3 0 014.24 4.24l-4.54 4.54" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/>
+            <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/>
+          </svg>
         </span>
         TransURL
       </div>
-      <p class="footer__text">© 2026 TransURL. Dibuat untuk diri saya sendiri. Tidak ada biaya tersembunyi.</p>
+      <p class="footer__text">&copy; 2026 TransURL. <span data-i18n="footerText">Made for the community. No hidden costs.</span></p>
       <div class="footer__decor" aria-hidden="true"></div>
     </div>
   </footer>
@@ -972,17 +911,266 @@
     (function() {
       'use strict';
 
+      // ==========================================
+      // TRANSLATIONS
+      // ==========================================
+      var translations = {
+        id: {
+          navTools: 'Tools',
+          navFeatures: 'Fitur',
+          navHowTo: 'Cara Pakai',
+          badgeQR: 'QR Code Generator',
+          badgeURL: 'URL Shortener',
+          heroTitle1: 'Generate QR Code',
+          heroTitle2: 'Shorten URL',
+          heroTitle3: '100% Gratis.',
+          heroSubtitle: 'Dua tools powerful dalam satu tempat. Tanpa biaya, tanpa batas, tanpa pendaftaran.',
+          heroCTA: 'Coba Sekarang',
+          heroNote: '✓ Gratis selamanya &nbsp;•&nbsp; ✓ Tanpa login',
+          toolTitle: 'Pilih Tool',
+          toolSubtitle: 'Mau buat QR Code atau shorten URL?',
+          tabQR: 'QR Code',
+          tabURL: 'URL Shortener',
+          qrInputLabel: 'Masukkan URL atau teks untuk generate QR Code',
+          qrInputPlaceholder: 'Masukkan URL atau teks untuk QR Code...',
+          btnGenerate: 'Generate QR',
+          qrPlaceholder: 'QR Code akan muncul di sini',
+          qrLoadingText: 'Generating QR Code...',
+          btnEditQR: 'Edit QR',
+          btnDownloadQR: 'Download QR',
+          downloadLabel: 'Download',
+          downloadJPG: 'Download JPG',
+          downloadPNG: 'Download PNG',
+          downloadSVG: 'Download SVG',
+          copyLabel: 'Copy to Clipboard',
+          copyJPG: 'Copy JPG',
+          copyPNG: 'Copy PNG',
+          copySVG: 'Copy SVG',
+          btnReset: 'Reset',
+          qrNote: '100% Free. Data tidak disimpan di server.',
+          urlInputLabel: 'Masukkan URL panjang untuk di-shorten',
+          urlInputPlaceholder: 'Masukkan URL panjang di sini...',
+          btnShorten: 'Shorten URL',
+          shortenerPlaceholder: 'Short URL akan muncul di sini',
+          shortenerLoadingText: 'Shortening URL...',
+          btnCopy: 'Copy',
+          shortenerNote: 'URL di-generate secara lokal. Tidak ada data yang dikirim ke server.',
+          featuresTitle: 'Kenapa TransURL?',
+          featuresSubtitle: 'Tools gratis yang powerful dan mudah digunakan',
+          feat1Title: '100% Gratis<br>Selamanya',
+          feat1Desc: 'QR Code &amp; URL Shortener gratis tanpa biaya tersembunyi atau subscription.',
+          feat2Title: 'Super Cepat<br>&lt; 1 Detik',
+          feat2Desc: 'Proses instan di browser. Generate QR atau shorten URL tanpa loading lama.',
+          feat3Title: 'Aman &amp;<br>Privasi Terjaga',
+          feat3Desc: 'Semua diproses client-side. Data tidak pernah dikirim atau disimpan di server.',
+          feat4Title: 'Mobile<br>Friendly',
+          feat4Desc: 'Desain responsif. Pakai di HP, tablet, atau desktop dengan pengalaman sama bagusnya.',
+          feat5Title: 'URL Shortener<br>Instan',
+          feat5Desc: 'Persingkat URL panjang jadi link yang ringkas dan mudah dibagikan.',
+          feat6Title: '6 Format<br>Export',
+          feat6Desc: 'Download JPG, PNG, SVG atau copy langsung ke clipboard.',
+          feat7Title: 'Custom QR<br>+ Logo',
+          feat7Desc: 'Edit warna dan tambahkan logo ke tengah QR Code dengan mudah.',
+          feat8Title: 'Tanpa Instal<br>Required',
+          feat8Desc: 'Langsung berjalan di browser. Tanpa download, tanpa ekstensi, tanpa instalasi.',
+          howTitle: 'Cara Pakai',
+          howSubtitle: 'Cuma 3 langkah simpel untuk setiap tool',
+          qrStepsTitle: 'QR Code Generator',
+          qrStep1Title: 'Masukkan URL atau Teks',
+          qrStep1Desc: 'Ketik atau paste konten yang mau diubah jadi QR Code',
+          qrStep2Title: 'Klik Generate QR',
+          qrStep2Desc: 'Tekan tombol "Generate QR" dan tunggu sebentar',
+          qrStep3Title: 'Edit &amp; Export',
+          qrStep3Desc: 'Edit warna, tambah logo, lalu download atau copy',
+          urlStepsTitle: 'URL Shortener',
+          urlStep1Title: 'Paste URL Panjang',
+          urlStep1Desc: 'Masukkan URL panjang yang ingin dipersingkat',
+          urlStep2Title: 'Klik Shorten URL',
+          urlStep2Desc: 'Tekan tombol "Shorten URL" untuk generate link pendek',
+          urlStep3Title: 'Copy &amp; Bagikan',
+          urlStep3Desc: 'Short URL siap di-copy dan dibagikan ke siapa saja',
+          footerText: 'Dibuat untuk diri saya sendiri. Tidak ada biaya tersembunyi.',
+          editModalTitle: 'Edit QR Code',
+          editColorsTitle: 'Warna QR Code',
+          fgColorLabel: 'Foreground',
+          bgColorLabel: 'Background',
+          editLogoTitle: 'Logo Tengah QR',
+          logoUploadText: 'Klik untuk upload logo (PNG, JPG, SVG)',
+          logoSizeLabel: 'Ukuran Logo:',
+          removeLogoBtn: 'Hapus Logo',
+          cancelBtn: 'Batal',
+          applyBtn: 'Terapkan Perubahan'
+        },
+        en: {
+          navTools: 'Tools',
+          navFeatures: 'Features',
+          navHowTo: 'How to Use',
+          badgeQR: 'QR Code Generator',
+          badgeURL: 'URL Shortener',
+          heroTitle1: 'Generate QR Code',
+          heroTitle2: 'Shorten URL',
+          heroTitle3: '100% Free.',
+          heroSubtitle: 'Two powerful tools in one place. No cost, no limits, no registration required.',
+          heroCTA: 'Try Now',
+          heroNote: '✓ Free forever &nbsp;•&nbsp; ✓ No login',
+          toolTitle: 'Choose a Tool',
+          toolSubtitle: 'Want to create a QR Code or shorten a URL?',
+          tabQR: 'QR Code',
+          tabURL: 'URL Shortener',
+          qrInputLabel: 'Enter URL or text to generate QR Code',
+          qrInputPlaceholder: 'Enter URL or text for QR Code...',
+          btnGenerate: 'Generate QR',
+          qrPlaceholder: 'QR Code will appear here',
+          qrLoadingText: 'Generating QR Code...',
+          btnEditQR: 'Edit QR',
+          btnDownloadQR: 'Download QR',
+          downloadLabel: 'Download',
+          downloadJPG: 'Download JPG',
+          downloadPNG: 'Download PNG',
+          downloadSVG: 'Download SVG',
+          copyLabel: 'Copy to Clipboard',
+          copyJPG: 'Copy JPG',
+          copyPNG: 'Copy PNG',
+          copySVG: 'Copy SVG',
+          btnReset: 'Reset',
+          qrNote: '100% Free. Data is not stored on the server.',
+          urlInputLabel: 'Enter long URL to shorten',
+          urlInputPlaceholder: 'Enter long URL here...',
+          btnShorten: 'Shorten URL',
+          shortenerPlaceholder: 'Short URL will appear here',
+          shortenerLoadingText: 'Shortening URL...',
+          btnCopy: 'Copy',
+          shortenerNote: 'URLs are generated locally. No data is sent to any server.',
+          featuresTitle: 'Why TransURL?',
+          featuresSubtitle: 'Free tools that are powerful and easy to use',
+          feat1Title: '100% Free<br>Forever',
+          feat1Desc: 'QR Code &amp; URL Shortener free with no hidden costs or subscriptions.',
+          feat2Title: 'Super Fast<br>&lt; 1 Second',
+          feat2Desc: 'Instant processing in your browser. Generate QR or shorten URLs without waiting.',
+          feat3Title: 'Safe &amp;<br>Private',
+          feat3Desc: 'All processing is done client-side. Data is never sent or stored on any server.',
+          feat4Title: 'Mobile<br>Friendly',
+          feat4Desc: 'Responsive design. Use on phone, tablet, or desktop with the same great experience.',
+          feat5Title: 'Instant URL<br>Shortener',
+          feat5Desc: 'Shorten long URLs into compact links that are easy to share.',
+          feat6Title: '6 Export<br>Formats',
+          feat6Desc: 'Download JPG, PNG, SVG or copy directly to clipboard.',
+          feat7Title: 'Custom QR<br>+ Logo',
+          feat7Desc: 'Edit colors and add a logo to the center of your QR Code easily.',
+          feat8Title: 'No Install<br>Required',
+          feat8Desc: 'Runs directly in your browser. No downloads, no extensions, no installations.',
+          howTitle: 'How to Use',
+          howSubtitle: 'Just 3 simple steps for each tool',
+          qrStepsTitle: 'QR Code Generator',
+          qrStep1Title: 'Enter URL or Text',
+          qrStep1Desc: 'Type or paste the content you want to turn into a QR Code',
+          qrStep2Title: 'Click Generate QR',
+          qrStep2Desc: 'Press the "Generate QR" button and wait a moment',
+          qrStep3Title: 'Edit &amp; Export',
+          qrStep3Desc: 'Edit colors, add logo, then download or copy',
+          urlStepsTitle: 'URL Shortener',
+          urlStep1Title: 'Paste Long URL',
+          urlStep1Desc: 'Enter the long URL you want to shorten',
+          urlStep2Title: 'Click Shorten URL',
+          urlStep2Desc: 'Press the "Shorten URL" button to generate a short link',
+          urlStep3Title: 'Copy &amp; Share',
+          urlStep3Desc: 'The short URL is ready to copy and share with anyone',
+          footerText: 'Made for the community. No hidden costs.',
+          editModalTitle: 'Edit QR Code',
+          editColorsTitle: 'QR Code Colors',
+          fgColorLabel: 'Foreground',
+          bgColorLabel: 'Background',
+          editLogoTitle: 'Center Logo',
+          logoUploadText: 'Click to upload logo (PNG, JPG, SVG)',
+          logoSizeLabel: 'Logo Size:',
+          removeLogoBtn: 'Remove Logo',
+          cancelBtn: 'Cancel',
+          applyBtn: 'Apply Changes'
+        }
+      };
+
+      var currentLang = 'id';
+      var langBtn = document.getElementById('lang-btn');
+      var langMenu = document.getElementById('lang-menu');
+      var langCurrent = document.getElementById('lang-current');
+      var langItems = document.querySelectorAll('.lang-dropdown__item');
+
+      function setLanguage(lang) {
+        currentLang = lang;
+        var t = translations[lang];
+
+        // Update text content
+        document.querySelectorAll('[data-i18n]').forEach(function(el) {
+          var key = el.getAttribute('data-i18n');
+          if (t[key]) {
+            el.innerHTML = t[key];
+          }
+        });
+
+        // Update placeholders
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(function(el) {
+          var key = el.getAttribute('data-i18n-placeholder');
+          if (t[key]) el.placeholder = t[key];
+        });
+
+        // Update active state
+        langItems.forEach(function(item) {
+          item.classList.toggle('active', item.getAttribute('data-lang') === lang);
+        });
+
+        // Update current display
+        langCurrent.textContent = lang.toUpperCase();
+
+        // Update html lang attribute
+        document.documentElement.lang = lang === 'id' ? 'id' : 'en';
+      }
+
+      // Language dropdown toggle
+      langBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var isActive = langMenu.classList.contains('active');
+        langMenu.classList.toggle('active', !isActive);
+        langBtn.setAttribute('aria-expanded', !isActive);
+      });
+
+      // Language selection
+      langItems.forEach(function(item) {
+        item.addEventListener('click', function() {
+          var lang = this.getAttribute('data-lang');
+          setLanguage(lang);
+          langMenu.classList.remove('active');
+          langBtn.setAttribute('aria-expanded', 'false');
+        });
+      });
+
+      // Close on outside click
+      document.addEventListener('click', function(e) {
+        if (!langMenu.contains(e.target) && e.target !== langBtn) {
+          langMenu.classList.remove('active');
+          langBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          langMenu.classList.remove('active');
+          langBtn.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      // ==========================================
+      // NAVIGATION
+      // ==========================================
       var hamburger = document.querySelector('.navbar__hamburger');
       var navLinks = document.querySelector('.navbar__links');
       var toolTabs = document.querySelectorAll('.tool-tab');
       var toolPanels = document.querySelectorAll('.tool-panel');
       var downloadOverlay = document.getElementById('download-overlay');
-      var editOverlay = document.getElementById('edit-overlay');
 
       var qrInput = document.getElementById('qr-input');
       var btnGenerateQR = document.getElementById('btn-generate-qr');
-      var btnEditQR = document.getElementById('btn-edit-qr');
       var btnDownloadQR = document.getElementById('btn-download-qr');
+      var btnEditQR = document.getElementById('btn-edit-qr');
       var downloadMenu = document.getElementById('download-menu');
       var btnResetQR = document.getElementById('btn-reset-qr');
       var qrPlaceholder = document.getElementById('qr-placeholder');
@@ -991,22 +1179,6 @@
       var qrResult = document.getElementById('qr-result');
       var qrActions = document.getElementById('qr-actions');
       var qrCodeContainer = document.getElementById('qrcode');
-      var qrCanvasCustom = document.getElementById('qr-canvas-custom');
-
-      // Edit panel elements
-      var editPanel = document.getElementById('edit-panel');
-      var editPanelClose = document.getElementById('edit-panel-close');
-      var editFgColor = document.getElementById('edit-fg-color');
-      var editBgColor = document.getElementById('edit-bg-color');
-      var editLogoInput = document.getElementById('edit-logo-input');
-      var editFileLabel = document.getElementById('edit-file-label');
-      var editFileText = document.getElementById('edit-file-text');
-      var editLogoPreview = document.getElementById('edit-logo-preview');
-      var editLogoSizeGroup = document.getElementById('edit-logo-size-group');
-      var editLogoSize = document.getElementById('edit-logo-size');
-      var editLogoSizeValue = document.getElementById('edit-logo-size-value');
-      var editBtnApply = document.getElementById('edit-btn-apply');
-      var editBtnRemove = document.getElementById('edit-btn-remove');
 
       var optDownloadJpg = document.getElementById('opt-download-jpg');
       var optDownloadPng = document.getElementById('opt-download-png');
@@ -1014,6 +1186,23 @@
       var optCopyJpg = document.getElementById('opt-copy-jpg');
       var optCopyPng = document.getElementById('opt-copy-png');
       var optCopySvg = document.getElementById('opt-copy-svg');
+
+      var editModalOverlay = document.getElementById('edit-modal-overlay');
+      var editModalClose = document.getElementById('edit-modal-close');
+      var btnCancelEdit = document.getElementById('btn-cancel-edit');
+      var btnApplyEdit = document.getElementById('btn-apply-edit');
+      var editFgColor = document.getElementById('edit-fg-color');
+      var editFgHex = document.getElementById('edit-fg-hex');
+      var editBgColor = document.getElementById('edit-bg-color');
+      var editBgHex = document.getElementById('edit-bg-hex');
+      var qrEditPreview = document.getElementById('qr-edit-preview');
+      var logoUploadArea = document.getElementById('logo-upload-area');
+      var logoFileInput = document.getElementById('logo-file-input');
+      var logoFilename = document.getElementById('logo-filename');
+      var logoControls = document.getElementById('logo-controls');
+      var logoSizeSlider = document.getElementById('logo-size-slider');
+      var logoSizeValue = document.getElementById('logo-size-value');
+      var btnRemoveLogo = document.getElementById('btn-remove-logo');
 
       var urlInput = document.getElementById('url-input');
       var btnShorten = document.getElementById('btn-shorten');
@@ -1028,11 +1217,11 @@
       var originalUrlDisplay = document.getElementById('original-url-display');
 
       var qrInstance = null;
-      var qrText = '';
-      var qrForegroundColor = '#0F172A';
-      var qrBackgroundColor = '#FFFFFF';
-      var qrLogoImage = null;
-      var qrLogoSizePercent = 25;
+      var currentQRText = '';
+      var currentFgColor = '#0F172A';
+      var currentBgColor = '#FFFFFF';
+      var logoImage = null;
+      var logoSizePercent = 25;
 
       // Mobile Menu
       hamburger.addEventListener('click', function() {
@@ -1060,131 +1249,31 @@
           toolPanels.forEach(function(panel) { panel.classList.remove('active'); });
           document.getElementById(targetId).classList.add('active');
           closeDropdown();
-          closeEditPanel();
         });
       });
 
-      // Download Dropdown
+      // Dropdown
       function toggleDropdown() { downloadMenu.classList.contains('active') ? closeDropdown() : openDropdown(); }
-      function openDropdown() {
-        downloadMenu.classList.add('active');
-        btnDownloadQR.classList.add('active');
-        btnDownloadQR.setAttribute('aria-expanded', 'true');
-        downloadOverlay.classList.add('active');
-      }
-      function closeDropdown() {
-        downloadMenu.classList.remove('active');
-        btnDownloadQR.classList.remove('active');
-        btnDownloadQR.setAttribute('aria-expanded', 'false');
-        downloadOverlay.classList.remove('active');
-      }
+      function openDropdown() { downloadMenu.classList.add('active'); btnDownloadQR.classList.add('active'); btnDownloadQR.setAttribute('aria-expanded', 'true'); downloadOverlay.classList.add('active'); }
+      function closeDropdown() { downloadMenu.classList.remove('active'); btnDownloadQR.classList.remove('active'); btnDownloadQR.setAttribute('aria-expanded', 'false'); downloadOverlay.classList.remove('active'); }
       btnDownloadQR.addEventListener('click', function(e) { e.stopPropagation(); toggleDropdown(); });
       downloadOverlay.addEventListener('click', closeDropdown);
-      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeDropdown(); closeEditPanel(); } });
+      document.addEventListener('keydown', function(e) { if (e.key === 'Escape') { closeDropdown(); closeEditModal(); } });
       document.addEventListener('click', function(e) { if (!downloadMenu.contains(e.target) && e.target !== btnDownloadQR) closeDropdown(); });
-
-      // Edit Panel
-      function openEditPanel() {
-        editPanel.classList.add('active');
-        btnEditQR.classList.add('active');
-        editOverlay.classList.add('active');
-        // Set current colors
-        editFgColor.value = qrForegroundColor;
-        editBgColor.value = qrBackgroundColor;
-        if (qrLogoImage) {
-          editLogoPreview.src = qrLogoImage.src;
-          editLogoPreview.classList.add('active');
-          editFileLabel.classList.add('has-file');
-          editFileText.textContent = 'Ganti Logo';
-          editLogoSizeGroup.style.display = 'block';
-        } else {
-          editLogoPreview.classList.remove('active');
-          editFileLabel.classList.remove('has-file');
-          editFileText.textContent = 'Upload Logo';
-          editLogoSizeGroup.style.display = 'none';
-        }
-        editLogoSize.value = qrLogoSizePercent;
-        editLogoSizeValue.textContent = qrLogoSizePercent + '%';
-      }
-
-      function closeEditPanel() {
-        editPanel.classList.remove('active');
-        btnEditQR.classList.remove('active');
-        editOverlay.classList.remove('active');
-      }
-
-      btnEditQR.addEventListener('click', function(e) { e.stopPropagation(); editPanel.classList.contains('active') ? closeEditPanel() : openEditPanel(); });
-      editPanelClose.addEventListener('click', closeEditPanel);
-      editOverlay.addEventListener('click', closeEditPanel);
-      document.addEventListener('click', function(e) { if (!editPanel.contains(e.target) && e.target !== btnEditQR) closeEditPanel(); });
-
-      // Logo Upload
-      editLogoInput.addEventListener('change', function(e) {
-        var file = e.target.files[0];
-        if (file) {
-          var reader = new FileReader();
-          reader.onload = function(ev) {
-            var img = new Image();
-            img.onload = function() {
-              qrLogoImage = img;
-              editLogoPreview.src = ev.target.result;
-              editLogoPreview.classList.add('active');
-              editFileLabel.classList.add('has-file');
-              editFileText.textContent = 'Ganti Logo';
-              editLogoSizeGroup.style.display = 'block';
-            };
-            img.src = ev.target.result;
-          };
-          reader.readAsDataURL(file);
-        }
-      });
-
-      // Logo Size
-      editLogoSize.addEventListener('input', function() {
-        qrLogoSizePercent = parseInt(this.value);
-        editLogoSizeValue.textContent = qrLogoSizePercent + '%';
-      });
-
-      // Apply Edit
-      editBtnApply.addEventListener('click', function() {
-        qrForegroundColor = editFgColor.value;
-        qrBackgroundColor = editBgColor.value;
-        regenerateQR();
-        closeEditPanel();
-      });
-
-      // Reset Default
-      editBtnRemove.addEventListener('click', function() {
-        qrForegroundColor = '#0F172A';
-        qrBackgroundColor = '#FFFFFF';
-        qrLogoImage = null;
-        qrLogoSizePercent = 25;
-        editFgColor.value = qrForegroundColor;
-        editBgColor.value = qrBackgroundColor;
-        editLogoPreview.classList.remove('active');
-        editFileLabel.classList.remove('has-file');
-        editFileText.textContent = 'Upload Logo';
-        editLogoSizeGroup.style.display = 'none';
-        editLogoSize.value = 25;
-        editLogoSizeValue.textContent = '25%';
-        editLogoInput.value = '';
-        regenerateQR();
-      });
 
       // QR Generation
       function clearQR() {
         if (qrInstance) { qrCodeContainer.innerHTML = ''; qrInstance = null; }
-        qrCanvasCustom.style.display = 'none';
         qrResult.classList.remove('active');
         qrActions.classList.remove('active');
         qrLoading.classList.remove('active');
         qrPlaceholder.style.display = '';
         closeDropdown();
-        closeEditPanel();
-        qrForegroundColor = '#0F172A';
-        qrBackgroundColor = '#FFFFFF';
-        qrLogoImage = null;
-        qrLogoSizePercent = 25;
+        logoImage = null;
+        logoUploadArea.classList.remove('has-logo');
+        logoFilename.textContent = '';
+        logoControls.classList.remove('active');
+        logoFileInput.value = '';
       }
 
       function showQRLoading() {
@@ -1204,86 +1293,49 @@
         }, 100);
       }
 
-      function generateQRCode() {
-        qrText = qrInput.value.trim();
-        if (!qrText) { qrPlaceholder.style.display = ''; qrLoading.classList.remove('active'); qrInput.focus(); return; }
+      function generateQRCode(fgColor, bgColor, logoImg) {
+        var text = qrInput.value.trim();
+        if (!text) { qrPlaceholder.style.display = ''; qrLoading.classList.remove('active'); qrInput.focus(); return; }
+        currentQRText = text;
+        var fg = fgColor || currentFgColor;
+        var bg = bgColor || currentBgColor;
         qrCodeContainer.innerHTML = '';
-        qrCanvasCustom.style.display = 'none';
         try {
-          qrInstance = new QRCode(qrCodeContainer, { text: qrText, width: 200, height: 200, colorDark: qrForegroundColor, colorLight: qrBackgroundColor, correctLevel: QRCode.CorrectLevel.M });
+          qrInstance = new QRCode(qrCodeContainer, { text: text, width: 200, height: 200, colorDark: fg, colorLight: bg, correctLevel: QRCode.CorrectLevel.M });
           qrResult.classList.add('active');
           qrActions.classList.add('active');
+          if (logoImg) { renderLogoOnQR(logoImg, logoSizePercent); }
         } catch (err) {
           console.error('QR Generation error:', err);
           qrPlaceholder.style.display = '';
-          alert('Terjadi kesalahan. Coba lagi.');
+          alert(currentLang === 'id' ? 'Terjadi kesalahan. Coba lagi.' : 'An error occurred. Please try again.');
         }
       }
 
-      function regenerateQR() {
-        if (!qrText) return;
-        qrCodeContainer.innerHTML = '';
-        qrCanvasCustom.style.display = 'none';
-        try {
-          qrInstance = new QRCode(qrCodeContainer, { text: qrText, width: 200, height: 200, colorDark: qrForegroundColor, colorLight: qrBackgroundColor, correctLevel: QRCode.CorrectLevel.M });
-          
-          // Apply logo if exists
-          if (qrLogoImage) {
-            setTimeout(function() {
-              var qrCanvas = qrCodeContainer.querySelector('canvas');
-              if (!qrCanvas) {
-                var qrImg = qrCodeContainer.querySelector('img');
-                if (qrImg) {
-                  var tempCanvas = document.createElement('canvas');
-                  var tempCtx = tempCanvas.getContext('2d');
-                  var img = new Image();
-                  img.onload = function() {
-                    tempCanvas.width = img.width;
-                    tempCanvas.height = img.height;
-                    tempCtx.drawImage(img, 0, 0);
-                    drawLogoOnCanvas(tempCanvas);
-                    showCustomCanvas(tempCanvas);
-                  };
-                  img.src = qrImg.src;
-                }
-                return;
-              }
-              drawLogoOnCanvas(qrCanvas);
-              showCustomCanvas(qrCanvas);
-            }, 100);
+      function renderLogoOnQR(logoImg, sizePercent) {
+        setTimeout(function() {
+          var qrImg = qrCodeContainer.querySelector('img');
+          if (qrImg) {
+            var tempCanvas = document.createElement('canvas');
+            var tempCtx = tempCanvas.getContext('2d');
+            var img = new Image();
+            img.crossOrigin = 'anonymous';
+            img.onload = function() {
+              tempCanvas.width = img.width;
+              tempCanvas.height = img.height;
+              tempCtx.drawImage(img, 0, 0);
+              var logoW = tempCanvas.width * (sizePercent / 100);
+              var logoH = tempCanvas.height * (sizePercent / 100);
+              var logoX = (tempCanvas.width - logoW) / 2;
+              var logoY = (tempCanvas.height - logoH) / 2;
+              tempCtx.fillStyle = '#FFFFFF';
+              tempCtx.fillRect(logoX - 4, logoY - 4, logoW + 8, logoH + 8);
+              tempCtx.drawImage(logoImg, logoX, logoY, logoW, logoH);
+              qrImg.src = tempCanvas.toDataURL('image/png');
+            };
+            img.src = qrImg.src;
           }
-        } catch (err) {
-          console.error('QR Regeneration error:', err);
-        }
-      }
-
-      function drawLogoOnCanvas(canvas) {
-        if (!qrLogoImage) return;
-        var ctx = canvas.getContext('2d');
-        var logoSize = canvas.width * (qrLogoSizePercent / 100);
-        var x = (canvas.width - logoSize) / 2;
-        var y = (canvas.height - logoSize) / 2;
-        
-        // Draw white background for logo
-        ctx.fillStyle = qrBackgroundColor;
-        ctx.fillRect(x - 4, y - 4, logoSize + 8, logoSize + 8);
-        
-        // Draw logo
-        ctx.drawImage(qrLogoImage, x, y, logoSize, logoSize);
-      }
-
-      function showCustomCanvas(canvas) {
-        qrCanvasCustom.width = canvas.width;
-        qrCanvasCustom.height = canvas.height;
-        var ctx = qrCanvasCustom.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.drawImage(canvas, 0, 0);
-        qrCanvasCustom.style.display = 'block';
-        // Hide original qr elements
-        var qrImg = qrCodeContainer.querySelector('img');
-        if (qrImg) qrImg.style.display = 'none';
-        var qrC = qrCodeContainer.querySelector('canvas');
-        if (qrC) qrC.style.display = 'none';
+        }, 100);
       }
 
       btnGenerateQR.addEventListener('click', function() {
@@ -1295,18 +1347,127 @@
           setTimeout(function() { qrInput.style.borderColor = ''; qrInput.style.boxShadow = ''; }, 1500);
           return;
         }
+        logoImage = null;
+        logoUploadArea.classList.remove('has-logo');
+        logoFilename.textContent = '';
+        logoControls.classList.remove('active');
+        logoFileInput.value = '';
+        currentFgColor = '#0F172A';
+        currentBgColor = '#FFFFFF';
         showQRLoading();
       });
 
       qrInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') btnGenerateQR.click(); });
       btnResetQR.addEventListener('click', function() { qrInput.value = ''; clearQR(); qrInput.focus(); });
 
-      // Get active canvas
-      function getActiveCanvasAsync(callback) {
-        if (qrCanvasCustom.style.display !== 'none') {
-          callback(qrCanvasCustom);
-          return;
+      // EDIT QR MODAL
+      function openEditModal() {
+        editModalOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        editFgColor.value = currentFgColor;
+        editFgHex.value = currentFgColor;
+        editBgColor.value = currentBgColor;
+        editBgHex.value = currentBgColor;
+        logoSizeSlider.value = logoSizePercent;
+        logoSizeValue.textContent = logoSizePercent + '%';
+        generateEditPreview();
+      }
+
+      function closeEditModal() {
+        editModalOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      btnEditQR.addEventListener('click', openEditModal);
+      editModalClose.addEventListener('click', closeEditModal);
+      btnCancelEdit.addEventListener('click', closeEditModal);
+      editModalOverlay.addEventListener('click', function(e) { if (e.target === editModalOverlay) closeEditModal(); });
+
+      editFgColor.addEventListener('input', function() { editFgHex.value = this.value; generateEditPreview(); });
+      editFgHex.addEventListener('input', function() { if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) { editFgColor.value = this.value; generateEditPreview(); } });
+      editBgColor.addEventListener('input', function() { editBgHex.value = this.value; generateEditPreview(); });
+      editBgHex.addEventListener('input', function() { if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) { editBgColor.value = this.value; generateEditPreview(); } });
+
+      logoUploadArea.addEventListener('click', function() { logoFileInput.click(); });
+      logoFileInput.addEventListener('change', function(e) {
+        var file = e.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+          var reader = new FileReader();
+          reader.onload = function(ev) {
+            var img = new Image();
+            img.onload = function() {
+              logoImage = img;
+              logoUploadArea.classList.add('has-logo');
+              logoFilename.textContent = file.name;
+              logoControls.classList.add('active');
+              generateEditPreview();
+            };
+            img.src = ev.target.result;
+          };
+          reader.readAsDataURL(file);
         }
+      });
+
+      btnRemoveLogo.addEventListener('click', function() {
+        logoImage = null;
+        logoUploadArea.classList.remove('has-logo');
+        logoFilename.textContent = '';
+        logoControls.classList.remove('active');
+        logoFileInput.value = '';
+        generateEditPreview();
+      });
+
+      logoSizeSlider.addEventListener('input', function() {
+        logoSizePercent = parseInt(this.value);
+        logoSizeValue.textContent = logoSizePercent + '%';
+        generateEditPreview();
+      });
+
+      function generateEditPreview() {
+        qrEditPreview.innerHTML = '';
+        var fg = editFgColor.value;
+        var bg = editBgColor.value;
+        var tempDiv = document.createElement('div');
+        tempDiv.style.display = 'inline-block';
+        qrEditPreview.appendChild(tempDiv);
+        try {
+          var tempQR = new QRCode(tempDiv, { text: currentQRText, width: 180, height: 180, colorDark: fg, colorLight: bg, correctLevel: QRCode.CorrectLevel.M });
+          if (logoImage) {
+            setTimeout(function() {
+              var qrImg = tempDiv.querySelector('img');
+              if (qrImg) {
+                var c = document.createElement('canvas');
+                var ctx = c.getContext('2d');
+                var img = new Image();
+                img.onload = function() {
+                  c.width = img.width;
+                  c.height = img.height;
+                  ctx.drawImage(img, 0, 0);
+                  var lw = c.width * (logoSizePercent / 100);
+                  var lh = c.height * (logoSizePercent / 100);
+                  var lx = (c.width - lw) / 2;
+                  var ly = (c.height - lh) / 2;
+                  ctx.fillStyle = bg;
+                  ctx.fillRect(lx - 4, ly - 4, lw + 8, lh + 8);
+                  ctx.drawImage(logoImage, lx, ly, lw, lh);
+                  qrImg.src = c.toDataURL('image/png');
+                };
+                img.src = qrImg.src;
+              }
+            }, 50);
+          }
+        } catch(e) {}
+      }
+
+      btnApplyEdit.addEventListener('click', function() {
+        currentFgColor = editFgColor.value;
+        currentBgColor = editBgColor.value;
+        generateQRCode(currentFgColor, currentBgColor, logoImage);
+        closeEditModal();
+      });
+
+      // Get QR Canvas
+      function getQRCanvasAsync(callback) {
         var qrCanvas = qrCodeContainer.querySelector('canvas');
         if (qrCanvas) { callback(qrCanvas); return; }
         var qrImg = qrCodeContainer.querySelector('img');
@@ -1331,14 +1492,14 @@
           var svgParts = [];
           svgParts.push('<?xml version="1.0" encoding="UTF-8"?>');
           svgParts.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + width + ' ' + height + '" width="' + width + '" height="' + height + '" shape-rendering="crispEdges">');
-          svgParts.push('<rect x="0" y="0" width="' + width + '" height="' + height + '" fill="' + qrBackgroundColor + '"/>');
+          svgParts.push('<rect x="0" y="0" width="' + width + '" height="' + height + '" fill="' + currentBgColor + '"/>');
           var rectParts = [];
           var row, col;
           for (row = 0; row < height; row++) {
             for (col = 0; col < width; col++) {
               var idx = (row * width + col) * 4;
               if (data[idx] < 128 && data[idx + 1] < 128 && data[idx + 2] < 128) {
-                rectParts.push('<rect x="' + col + '" y="' + row + '" width="1" height="1" fill="' + qrForegroundColor + '"/>');
+                rectParts.push('<rect x="' + col + '" y="' + row + '" width="1" height="1" fill="' + currentFgColor + '"/>');
               }
             }
           }
@@ -1349,35 +1510,14 @@
       }
 
       // Download Functions
-      function downloadAsPNG(canvas) {
-        var link = document.createElement('a');
-        link.download = 'transurl-qrcode.png';
-        link.href = canvas.toDataURL('image/png');
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-
-      function downloadAsJPG(canvas) {
-        var link = document.createElement('a');
-        link.download = 'transurl-qrcode.jpg';
-        link.href = canvas.toDataURL('image/jpeg', 0.95);
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-
+      function downloadAsPNG(canvas) { var link = document.createElement('a'); link.download = 'transurl-qrcode.png'; link.href = canvas.toDataURL('image/png'); document.body.appendChild(link); link.click(); document.body.removeChild(link); }
+      function downloadAsJPG(canvas) { var link = document.createElement('a'); link.download = 'transurl-qrcode.jpg'; link.href = canvas.toDataURL('image/jpeg', 0.95); document.body.appendChild(link); link.click(); document.body.removeChild(link); }
       function downloadAsSVG(canvas) {
         var svgString = generateSVGString(canvas);
         if (svgString) {
           var blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
           var url = URL.createObjectURL(blob);
-          var link = document.createElement('a');
-          link.download = 'transurl-qrcode.svg';
-          link.href = url;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
+          var link = document.createElement('a'); link.download = 'transurl-qrcode.svg'; link.href = url; document.body.appendChild(link); link.click(); document.body.removeChild(link);
           setTimeout(function() { URL.revokeObjectURL(url); }, 100);
         }
       }
@@ -1386,39 +1526,26 @@
       function copyToClipboardBlob(canvas, mimeType) {
         if (navigator.clipboard && navigator.clipboard.write) {
           canvas.toBlob(function(blob) {
-            if (blob) {
-              var item = new ClipboardItem({ [mimeType]: blob });
-              navigator.clipboard.write([item]).then(function() { showDropdownCopiedState(); }).catch(function() { fallbackCopyImage(canvas, mimeType); });
-            } else { fallbackCopyImage(canvas, mimeType); }
+            if (blob) { var item = new ClipboardItem({ [mimeType]: blob }); navigator.clipboard.write([item]).then(function() { showDropdownCopiedState(); }).catch(function() { alert(currentLang === 'id' ? 'Gagal copy image. Coba download sebagai gantinya.' : 'Failed to copy image. Try downloading instead.'); }); }
           }, mimeType);
-        } else { fallbackCopyImage(canvas, mimeType); }
-      }
-
-      function fallbackCopyImage(canvas, mimeType) {
-        canvas.toBlob(function(blob) {
-          if (blob && navigator.clipboard && navigator.clipboard.writeText) {
-            var dataUrl = canvas.toDataURL(mimeType);
-            navigator.clipboard.writeText(dataUrl).then(function() { showDropdownCopiedState(); }).catch(function() { alert('Gagal copy ke clipboard.'); });
-          } else { alert('Copy image tidak didukung di browser ini.'); }
-        }, mimeType);
+        } else {
+          canvas.toBlob(function(blob) {
+            if (blob) { var dataUrl = canvas.toDataURL(mimeType); navigator.clipboard.writeText(dataUrl).then(function() { showDropdownCopiedState(); }).catch(function() { alert(currentLang === 'id' ? 'Gagal copy ke clipboard.' : 'Failed to copy to clipboard.'); }); }
+          }, mimeType);
+        }
       }
 
       function copySVGToClipboard(canvas) {
         var svgString = generateSVGString(canvas);
-        if (!svgString) { alert('Gagal membuat SVG.'); return; }
+        if (!svgString) { alert(currentLang === 'id' ? 'Gagal membuat SVG.' : 'Failed to create SVG.'); return; }
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(svgString).then(function() { showDropdownCopiedState(); }).catch(function() { fallbackCopyText(svgString); });
         } else { fallbackCopyText(svgString); }
       }
 
       function fallbackCopyText(text) {
-        var textarea = document.createElement('textarea');
-        textarea.value = text;
-        textarea.style.position = 'fixed';
-        textarea.style.opacity = '0';
-        document.body.appendChild(textarea);
-        textarea.select();
-        try { document.execCommand('copy'); showDropdownCopiedState(); } catch (err) { alert('Gagal copy ke clipboard.'); }
+        var textarea = document.createElement('textarea'); textarea.value = text; textarea.style.position = 'fixed'; textarea.style.opacity = '0'; document.body.appendChild(textarea); textarea.select();
+        try { document.execCommand('copy'); showDropdownCopiedState(); } catch (err) { alert(currentLang === 'id' ? 'Gagal copy ke clipboard.' : 'Failed to copy to clipboard.'); }
         document.body.removeChild(textarea);
       }
 
@@ -1429,13 +1556,12 @@
         setTimeout(function() { btnDownloadQR.innerHTML = originalHTML; btnDownloadQR.style.background = ''; }, 1500);
       }
 
-      // Download Options
-      optDownloadJpg.addEventListener('click', function() { closeDropdown(); getActiveCanvasAsync(function(c) { downloadAsJPG(c); }); });
-      optDownloadPng.addEventListener('click', function() { closeDropdown(); getActiveCanvasAsync(function(c) { downloadAsPNG(c); }); });
-      optDownloadSvg.addEventListener('click', function() { closeDropdown(); getActiveCanvasAsync(function(c) { downloadAsSVG(c); }); });
-      optCopyJpg.addEventListener('click', function() { closeDropdown(); getActiveCanvasAsync(function(c) { copyToClipboardBlob(c, 'image/jpeg'); }); });
-      optCopyPng.addEventListener('click', function() { closeDropdown(); getActiveCanvasAsync(function(c) { copyToClipboardBlob(c, 'image/png'); }); });
-      optCopySvg.addEventListener('click', function() { closeDropdown(); getActiveCanvasAsync(function(c) { copySVGToClipboard(c); }); });
+      optDownloadJpg.addEventListener('click', function() { closeDropdown(); getQRCanvasAsync(function(c) { downloadAsJPG(c); }); });
+      optDownloadPng.addEventListener('click', function() { closeDropdown(); getQRCanvasAsync(function(c) { downloadAsPNG(c); }); });
+      optDownloadSvg.addEventListener('click', function() { closeDropdown(); getQRCanvasAsync(function(c) { downloadAsSVG(c); }); });
+      optCopyJpg.addEventListener('click', function() { closeDropdown(); getQRCanvasAsync(function(c) { copyToClipboardBlob(c, 'image/jpeg'); }); });
+      optCopyPng.addEventListener('click', function() { closeDropdown(); getQRCanvasAsync(function(c) { copyToClipboardBlob(c, 'image/png'); }); });
+      optCopySvg.addEventListener('click', function() { closeDropdown(); getQRCanvasAsync(function(c) { copySVGToClipboard(c); }); });
 
       // URL Shortener
       function generateShortCode() {
@@ -1453,7 +1579,7 @@
         shortUrlDisplay.textContent = '';
         originalUrlDisplay.textContent = '';
         btnCopy.classList.remove('copied');
-        btnCopy.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg> Copy';
+        btnCopy.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg> <span data-i18n="btnCopy">' + translations[currentLang].btnCopy + '</span>';
       }
 
       function showShortenerLoading() {
@@ -1479,7 +1605,7 @@
         if (!url.startsWith('http://') && !url.startsWith('https://')) url = 'https://' + url;
         var shortCode = generateShortCode();
         shortUrlDisplay.textContent = 'transurl.id/' + shortCode;
-        originalUrlDisplay.textContent = 'Original URL: ' + url;
+        originalUrlDisplay.textContent = (currentLang === 'id' ? 'URL Asli: ' : 'Original URL: ') + url;
         shortenerResult.classList.add('active');
         shortenerActions.classList.add('active');
       }
@@ -1506,23 +1632,17 @@
             btnCopy.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> Copied!';
             setTimeout(function() {
               btnCopy.classList.remove('copied');
-              btnCopy.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg> Copy';
+              btnCopy.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg> <span data-i18n="btnCopy">' + translations[currentLang].btnCopy + '</span>';
             }, 2000);
           });
         } else {
           var textarea = document.createElement('textarea');
-          textarea.value = shortUrl;
-          textarea.style.position = 'fixed';
-          textarea.style.opacity = '0';
-          document.body.appendChild(textarea);
-          textarea.select();
-          document.execCommand('copy');
-          document.body.removeChild(textarea);
+          textarea.value = shortUrl; textarea.style.position = 'fixed'; textarea.style.opacity = '0'; document.body.appendChild(textarea); textarea.select(); document.execCommand('copy'); document.body.removeChild(textarea);
           btnCopy.classList.add('copied');
           btnCopy.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg> Copied!';
           setTimeout(function() {
             btnCopy.classList.remove('copied');
-            btnCopy.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg> Copy';
+            btnCopy.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" stroke="currentColor" stroke-width="2" fill="none"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke="currentColor" stroke-width="2" fill="none"/></svg> <span data-i18n="btnCopy">' + translations[currentLang].btnCopy + '</span>';
           }, 2000);
         }
       });
@@ -1543,6 +1663,9 @@
           }
         });
       });
+
+      // Initialize language
+      setLanguage('id');
 
     })();
   </script>
