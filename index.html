@@ -38,6 +38,7 @@
       --color-amber-dark: #D97706;
       --color-cyan: #06B6D4;
       --color-cyan-light: #ECFEFF;
+      --color-amber-bg: #FFFBEB;
       --font-heading: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
@@ -273,8 +274,35 @@
     .edit-modal__preview { display: flex; align-items: center; justify-content: center; padding: var(--spacing-md); background-color: var(--color-gray-50); border: 1px solid var(--color-gray-200); border-radius: var(--border-radius-lg); margin-bottom: var(--spacing-lg); min-height: 240px; }
     .edit-modal__preview #qr-edit-preview { display: inline-block; }
     .edit-section { margin-bottom: var(--spacing-md); }
-    .edit-section__title { font-family: var(--font-heading); font-size: 14px; font-weight: 600; color: var(--color-gray-800); margin-bottom: var(--spacing-sm); display: flex; align-items: center; gap: 8px; }
+    .edit-section__title { font-family: var(--font-heading); font-size: 14px; font-weight: 600; color: var(--color-gray-800); margin-bottom: var(--spacing-xs); display: flex; align-items: center; gap: 8px; }
     .edit-section__title svg { width: 16px; height: 16px; fill: none; stroke: var(--color-purple); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .edit-section__info {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 10px 12px;
+      background-color: var(--color-amber-bg);
+      border: 1px solid var(--color-yellow);
+      border-radius: var(--border-radius-sm);
+      margin-bottom: var(--spacing-sm);
+    }
+    .edit-section__info svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: var(--color-amber-dark);
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .edit-section__info p {
+      font-size: 13px;
+      color: var(--color-gray-700);
+      line-height: 1.4;
+      font-weight: 500;
+    }
     .color-row { display: flex; gap: var(--spacing-sm); align-items: center; margin-bottom: var(--spacing-xs); }
     .color-label { font-size: 13px; font-weight: 500; color: var(--color-gray-600); min-width: 100px; }
     .color-picker-wrapper { display: flex; align-items: center; gap: 8px; flex: 1; }
@@ -432,6 +460,14 @@
             </svg>
             <span data-i18n="editColorsTitle">QR Code Colors</span>
           </h4>
+          <div class="edit-section__info">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <line x1="12" y1="16" x2="12" y2="12"/>
+              <line x1="12" y1="8" x2="12.01" y2="8"/>
+            </svg>
+            <p data-i18n="colorWarning">Pastikan warna Foreground lebih gelap dibandingkan dengan warna Background agar QR Code tetap bisa discan.</p>
+          </div>
           <div class="color-row">
             <span class="color-label" data-i18n="fgColorLabel">Foreground</span>
             <div class="color-picker-wrapper">
@@ -902,7 +938,7 @@
         </span>
         TransURL
       </div>
-      <p class="footer__text">&copy; 2026 TransURL. <span data-i18n="footerText">Made for the community. No hidden costs.</span></p>
+      <p class="footer__text">&copy; 2026 TransURL. <span data-i18n="footerText">Dibuat untuk diri saya sendiri. Tidak ada biaya tersembunyi.</span></p>
       <div class="footer__decor" aria-hidden="true"></div>
     </div>
   </footer>
@@ -992,6 +1028,7 @@
           footerText: 'Dibuat untuk diri saya sendiri. Tidak ada biaya tersembunyi.',
           editModalTitle: 'Edit QR Code',
           editColorsTitle: 'Warna QR Code',
+          colorWarning: 'Pastikan warna Foreground lebih gelap dibandingkan dengan warna Background agar QR Code tetap bisa discan.',
           fgColorLabel: 'Foreground',
           bgColorLabel: 'Background',
           editLogoTitle: 'Logo Tengah QR',
@@ -1075,9 +1112,10 @@
           urlStep2Desc: 'Press the "Shorten URL" button to generate a short link',
           urlStep3Title: 'Copy &amp; Share',
           urlStep3Desc: 'The short URL is ready to copy and share with anyone',
-          footerText: 'Made for the community. No hidden costs.',
+          footerText: 'Made for myself. No hidden costs.',
           editModalTitle: 'Edit QR Code',
           editColorsTitle: 'QR Code Colors',
+          colorWarning: 'Make sure the Foreground color is darker than the Background color so the QR Code remains scannable.',
           fgColorLabel: 'Foreground',
           bgColorLabel: 'Background',
           editLogoTitle: 'Center Logo',
